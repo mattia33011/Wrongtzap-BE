@@ -17,5 +17,5 @@ class UserServiceImpl: UserService {
     override fun generate(user: User) = user_repository.save(user)
 
     @Override
-    override fun getUserById(uid: String) = user_repository.findById(uid).get()
+    override fun getUserById(uid: Long) = user_repository.findById(uid).get()
 }

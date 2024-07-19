@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service
 @Service
 interface UserService {
     fun generate(user: User): User
-    fun getUserById(uid: String): User
+    fun getUserById(uid: Long): User
 }
