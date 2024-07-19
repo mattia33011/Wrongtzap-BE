@@ -8,25 +8,15 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RestController
-class UserController {
-
+@RestController("/users")
+class UserController(
     @Autowired
-    lateinit var user_service: UserService
-
+    val userService: UserService
+) {
     @GetMapping("/{uid}")
-    fun retrieveUser(@PathVariable uid:Long) = user_service.getUserById(uid)
-    @PostMapping("/stored/users")
-    fun storeUser(user: User) = user_service.generate(user)
-
+    fun retrieveUser(@PathVariable uid:Long) = userService.getUserById(uid)
+    @PostMapping
+    fun storeUser(user: User) = userService.generate(user)
     @GetMapping("/users")
-    fun s(): Any{
-        return user_service.getAll()
-    }
-
-    //MEtodo per test, da cancellare
-    @PostMapping("/users")
-    fun post(): Any{
-        return user_service.generate(User(1,"Mattia","Mattia.iaria@email.it"))
-    }
+    fun getAll() = userService.getAll()
 }
