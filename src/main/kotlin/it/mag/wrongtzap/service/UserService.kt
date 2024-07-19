@@ -8,4 +8,5 @@ import org.springframework.stereotype.Service
 interface UserService {
     fun generate(user: User): User
     fun getUserById(uid: Long): User
+    fun getAll(): List<User>
 }

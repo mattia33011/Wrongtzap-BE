@@ -18,4 +18,7 @@ class UserServiceImpl: UserService {
 
     @Override
     override fun getUserById(uid: Long) = user_repository.findById(uid).get()
+    override fun getAll(): List<User> {
+        return user_repository.findAll()
+    }
 }

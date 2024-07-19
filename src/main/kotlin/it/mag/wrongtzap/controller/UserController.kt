@@ -18,4 +18,15 @@ class UserController {
     fun retrieveUser(@PathVariable uid:Long) = user_service.getUserById(uid)
     @PostMapping("/stored/users")
     fun storeUser(user: User) = user_service.generate(user)
+
+    @GetMapping("/users")
+    fun s(): Any{
+        return user_service.getAll()
+    }
+
+    //MEtodo per test, da cancellare
+    @PostMapping("/users")
+    fun post(): Any{
+        return user_service.generate(User(1,"Mattia","Mattia.iaria@email.it"))
+    }
 }
