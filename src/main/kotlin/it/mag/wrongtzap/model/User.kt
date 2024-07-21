@@ -8,10 +8,12 @@ import jakarta.persistence.Id
 
 
 @Entity
-
-class User(uid: Long, private val username: String, private val email: String) {
-
+data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private val uid: Long = uid
+    private val uid: Long?,
+    private val username: String,
+    private val email: String
+) {
+    constructor(username: String, email: String) : this(null, username, email)
 }
