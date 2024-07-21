@@ -6,6 +6,8 @@ import it.mag.wrongtzap.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+// Ho tolto l'interfaccia perche' non e' utile in questo caso, non la andiamo a implementare in modi diversi
+
 @Service
 class UserService(
     @Autowired
