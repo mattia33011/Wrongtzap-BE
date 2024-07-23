@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class ObjectMapperConfig {
     @Bean
-    fun objectMapper(): ObjectMapper = ObjectMapper().registerKotlinModule()
+    fun objectMapperBean(): ObjectMapper = ObjectMapper().registerKotlinModule()
 
 }

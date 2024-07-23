@@ -30,6 +30,11 @@ dependencies {
 	// ObjectMapper Kotlin module
 	implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
 
+	// Spring Test
+	testImplementation ("org.springframework.boot:spring-boot-starter-test:3.3.2")
+	testImplementation("io.mockk:mockk:1.13.12")
+
+
 }
 
 kotlin {
