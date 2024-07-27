@@ -27,12 +27,22 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
 	// ObjectMapper Kotlin module
-	implementation ("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
 
 	// Spring Test
-	testImplementation ("org.springframework.boot:spring-boot-starter-test:3.3.2")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.2")
 	testImplementation("io.mockk:mockk:1.13.12")
+	testImplementation ("org.testcontainers:junit-jupiter")
+
+
+	// Test Container
+	testImplementation("org.testcontainers:mysql:1.20.0")
+	testImplementation ("org.springframework.boot:spring-boot-testcontainers")
+
+
+
 
 
 }
