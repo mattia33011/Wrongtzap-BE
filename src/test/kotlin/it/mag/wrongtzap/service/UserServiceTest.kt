@@ -47,6 +47,15 @@ class UserServiceTest @Autowired constructor(
             registry.add("spring.jpa.database-platform") { "org.hibernate.dialect.MySQLDialect" }
         }
     }
+    /*
+        TODO CRUD
+            C: CREATE --> DONE
+            R: READ --> DONE
+            U: UPDATE --> TODO
+            D: DELETE --> TODO
+
+            Test Driven Development --> TEST PRIMA DI IMPLEMENTAZIONE
+     */
 
     @Test
     @Transactional

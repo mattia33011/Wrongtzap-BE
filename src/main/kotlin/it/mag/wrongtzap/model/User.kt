@@ -26,4 +26,5 @@ data class User(
     val email: String
 ) {
     constructor(username: String, email: String) : this(null, username, email)
+    fun mappingToString() = "ciao"
 }
