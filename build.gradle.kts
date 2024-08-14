@@ -19,6 +19,12 @@ repositories {
 	mavenCentral()
 }
 
+dependencyManagement {
+	imports {
+		mavenBom("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release")
+	}
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
@@ -30,6 +36,9 @@ dependencies {
 
 	// ObjectMapper Kotlin module
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
+
+	// DGS Framework for GraphQL
+	implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")
 
 	// Spring Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.2")

@@ -7,6 +7,7 @@
 ### Linux
 ```shell
 curl -H "Content-Type: application/json" -X POST http://localhost:8080/users -d '{ "username": "Mattia", "email": "mattia.iaria@email.it" }'
+
 ```
 ### Windows
 ```shell

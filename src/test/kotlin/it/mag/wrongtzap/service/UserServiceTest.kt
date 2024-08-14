@@ -3,6 +3,7 @@ package it.mag.wrongtzap.service
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.repository.UserRepository
 import jakarta.transaction.Transactional
+import net.bytebuddy.utility.dispatcher.JavaDispatcher.Container
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -11,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.test.assertNotNull
 
@@ -30,15 +30,21 @@ class UserServiceTest @Autowired constructor(
         val default3= User("Alex" ,"trythis@arubapec.it")
 
         @Container
-        val mysql: MySQLContainer<Nothing> = MySQLContainer<Nothing>("mysql:latest").apply {
-            withInitScript("schema.sql")
+        lateinit var mysql: MySQLContainer<Nothing>
+
+        @BeforeAll
+        @JvmStatic
+        fun init() {
+            mysql = MySQLContainer<Nothing>("mysql:latest").apply {
+                withInitScript("schema.sql")
+            }
+            mysql.start()
+
         }
 
-        @JvmStatic
-        @BeforeAll
         @DynamicPropertySource
-        fun dynamicProperties(@Autowired registry: DynamicPropertyRegistry) {
-            mysql.start()
+        @JvmStatic
+        fun dynamicProperties(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url") { mysql.jdbcUrl }
             registry.add("spring.datasource.username") { mysql.username }
             registry.add("spring.datasource.password") { mysql.password }
@@ -47,23 +53,18 @@ class UserServiceTest @Autowired constructor(
             registry.add("spring.jpa.database-platform") { "org.hibernate.dialect.MySQLDialect" }
         }
     }
-    /*
-        TODO CRUD
-            C: CREATE --> DONE
-            R: READ --> DONE
-            U: UPDATE --> TODO
-            D: DELETE --> TODO
-
-            Test Driven Development --> TEST PRIMA DI IMPLEMENTAZIONE
-     */
 
     @Test
     @Transactional
     fun `should save`(){
-        service.generate(default1)
+
+
+        service.createUser(default1)
         assertNotNull(userRepository)
-        val testUser = service.getByUsername(default1.username).firstOrNull()
+
+        val testUser = service.retrieveByUsername(default1.userName).firstOrNull()
         assertNotNull(testUser)
+
     }
 
 }

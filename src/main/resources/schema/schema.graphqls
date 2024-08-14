@@ -1,0 +1,37 @@
+type Query{
+    getUser (userId: String!): User!
+    getAllUsers: [User!]
+    getChat (chatId: String!): Chat!
+    getAllChats: [Chat!]
+    getMessage (messageBody: String!): [Message!]
+    getAllMessages: [Message!]
+}
+
+
+type User {
+
+    userId: String!
+    userName: String!
+    userMail: String!
+    userChats: [Chat!]
+}
+
+
+type Message{
+
+    messageId: Int!
+    messageTime: String!
+    messageBody: String!
+    messageSender: User!
+
+}
+
+type Chat{
+
+    chatId: String!
+    chatName: String!
+    chatParticipants: [User!]!
+    chatMessages: [Message!]
+}
+
+

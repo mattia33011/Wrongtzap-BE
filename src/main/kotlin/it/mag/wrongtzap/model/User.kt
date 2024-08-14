@@ -1,10 +1,14 @@
 package it.mag.wrongtzap.model
 
-import jakarta.persistence.EmbeddedId
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonView
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+import it.mag.wrongtzap.config.ViewsConfig
+import jakarta.persistence.*
+
+import org.hibernate.annotations.UuidGenerator
 
 
 /*
@@ -18,13 +22,20 @@ import jakarta.persistence.Id
  */
 
 @Entity
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "userId")
 data class User(
+    @JsonView(ViewsConfig.Public::class)
+    var userName: String,
+    @JsonView(ViewsConfig.Public::class)
+    var userMail: String,
+){
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    val uid: Long?,
-    val username: String,
-    val email: String
-) {
-    constructor(username: String, email: String) : this(null, username, email)
-    fun mappingToString() = "ciao"
+    @UuidGenerator
+    @Column(updatable = false, nullable = false)
+    @JsonView(ViewsConfig.Public::class)
+    lateinit var userId: String
+
+    @ManyToMany(mappedBy = "chatParticipants", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JsonView(ViewsConfig.Internal::class)
+    var userChats: MutableSet<Chat> = mutableSetOf()
 }
