@@ -26,29 +26,42 @@ dependencyManagement {
 }
 
 dependencies {
+
+	//Spring Starter
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	runtimeOnly("com.mysql:mysql-connector-j")
+	implementation("org.springframework.boot:spring-boot-starter-security:3.2.0")
+	implementation("org.springframework.boot:spring-boot-starter-web:3.2.0")
+	implementation("org.springframework.boot:spring-boot-starter-validation:3.2.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	runtimeOnly("com.mysql:mysql-connector-j")
 
-	// ObjectMapper Kotlin module
+	//Kotlin Starter
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
-
-	// DGS Framework for GraphQL
-	implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
 	// Spring Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.2")
 	testImplementation("io.mockk:mockk:1.13.12")
 	testImplementation ("org.testcontainers:junit-jupiter")
-
+	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	// Test Container
 	testImplementation("org.testcontainers:mysql:1.20.0")
 	testImplementation ("org.springframework.boot:spring-boot-testcontainers")
+
+
+	// DGS Framework for GraphQL
+	implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")
+
+	// JWT Security
+	implementation ("com.auth0:java-jwt:4.4.0")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
 
 

@@ -4,11 +4,13 @@ import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.request.ChatRequest
+import it.mag.wrongtzap.request.MessageRequest
 import it.mag.wrongtzap.service.ChatService
 import it.mag.wrongtzap.service.MessageService
 import it.mag.wrongtzap.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import kotlin.jvm.Throws
 
 @Service
 class UserManager @Autowired constructor(
@@ -24,7 +26,7 @@ class UserManager @Autowired constructor(
 
         chatRequest.chatUsers.forEach{ id ->
             participants.add(
-                userService.retrieveById(id).orElseThrow{NullPointerException("User Not Found")}
+                userService.retrieveById(id)
             )
         }
 
@@ -39,11 +41,13 @@ class UserManager @Autowired constructor(
 
     }
 
-    fun createMessage(userId:String, chatId: String, body: String){
-        val user = userService.retrieveById(userId).orElseThrow { NullPointerException("UserNotFound") }
-        val message = Message(messageSender = user, messageBody = body)
+    fun createMessage(chatId: String, request: MessageRequest): Chat{
 
-        chatService.addChatMessage(chatId,messageService.createMessage(message))
+        val user = userService.retrieveById(request.userId)
+        val chat = chatService.retrieveChat(chatId)
+
+        val message = Message(messageSender = user, messageBody = request.messageBody, messageChat = chat )
+        return chatService.addChatMessage(chatId,messageService.createMessage(message))
     }
 
 

@@ -1,0 +1,20 @@
+extend type Query{
+    Chat (chatId: String!): Chat!
+    everyChat: [Chat!]
+}
+
+
+
+type Chat{
+
+    chatId: String!
+    chatName: String!
+    chatParticipants : [UserSummary]!
+    chatMessages: [MessageSummary!]
+}
+
+
+type ChatSummary{
+    chatName: String!
+    chatId: String!
+}

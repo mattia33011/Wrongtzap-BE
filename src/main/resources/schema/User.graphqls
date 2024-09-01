@@ -1,0 +1,23 @@
+type Query{
+    user(userId: String!): User!
+    everyUser: [User!]
+}
+
+type User {
+
+    userId: String!
+    userName: String!
+    userMail: String!
+    userChats: [ChatSummary!]
+    userMessages: [MessageSummary!]
+}
+
+type UserSummary{
+    userId: String!
+    userName: String!
+    userMail: String!
+}
+
+
+
+

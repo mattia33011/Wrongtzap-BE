@@ -1,0 +1,19 @@
+extend type Query{
+    Message(messageId: String!): Message!
+    searchMessage(messageBody: String!): [Message!]
+    everyMessage: [Message!]
+}
+
+type Message{
+
+    messageId: String!
+    messageTime: String!
+    messageBody: String!
+    messageSender: String!
+    messageChat: String!
+}
+
+type MessageSummary{
+    messageSender: String!
+    messageBody: String!
+}

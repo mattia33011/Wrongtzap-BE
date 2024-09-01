@@ -1,18 +1,18 @@
 package it.mag.wrongtzap.model
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import it.mag.wrongtzap.config.ViewsConfig
+import it.mag.wrongtzap.util.IdGenUtil
 import jakarta.persistence.*
-import org.hibernate.annotations.UuidGenerator
-import org.springframework.beans.factory.annotation.Autowired
 
 
 @Entity
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "chatId")
 data class Chat (
+
+    @Id
+    @Column(updatable = false, nullable = false)
+    @JsonView(ViewsConfig.Public::class)
+    var chatId: String = "",
 
     @JsonView(ViewsConfig.Public::class)
     var chatName: String,
@@ -24,17 +24,19 @@ data class Chat (
         joinColumns = [JoinColumn(name = "chat_id")],
         inverseJoinColumns = [JoinColumn(name = "participants_id")]
     )
-    @JsonView(ViewsConfig.Internal::class)
+    @JsonView(ViewsConfig.Public::class)
     var chatParticipants: MutableSet<User> = mutableSetOf(),
 
-    @OneToMany(cascade = [CascadeType.ALL])
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonView(ViewsConfig.Internal::class)
     var chatMessages: MutableList<Message> = mutableListOf(),
     ) {
 
-    @Id
-    @UuidGenerator
-    @Column(updatable = false, nullable = false)
-    @JsonView(ViewsConfig.Public::class)
-    lateinit var chatId: String
+    @PrePersist
+    fun chatInit() {
+        if (chatId.isEmpty()) {
+            chatId = IdGenUtil.generateChatId(chatName)
+        }
+    }
 }
+

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface MessageRepository: JpaRepository<Message,Long> {
+interface MessageRepository: JpaRepository<Message,String> {
     fun findByMessageBody(body: String): List<Message>
 
 }

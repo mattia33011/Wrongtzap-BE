@@ -6,6 +6,7 @@ import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.request.ChatRequest
 import it.mag.wrongtzap.service.ChatService
 import it.mag.wrongtzap.manager.UserManager
+import it.mag.wrongtzap.request.MessageRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,73 +23,46 @@ class ChatController @Autowired constructor(
     val chatService: ChatService,
     val userManager: UserManager,
 ){
-    //
-    // PostMappings
-    //
 
     @PostMapping
+    @JsonView(ViewsConfig.Public::class)
     fun postChat(@RequestBody chatRequest: ChatRequest) = userManager.createChat(chatRequest)
+
     @PostMapping("/{chatId}/users")
+    @JsonView(ViewsConfig.Public::class)
     fun postChatUser(@PathVariable chatId: String, @RequestBody user: User) = chatService.addChatUser(chatId, user)
 
-    //
-    // Chat GetMappings
-    //
-
-    @GetMapping()
+    @PostMapping("/{chatId}/messages")
     @JsonView(ViewsConfig.Public::class)
-    fun getAllChats() = chatService.retrieveAllChats()
-    @GetMapping("/{chatId}")
-    @JsonView(ViewsConfig.Public::class)
-    fun getChat(@PathVariable chatId: String) = chatService.retrieveChat(chatId)
+    fun postChatMessage(
 
-    //
-    // User GetMappings
-    //
-
-    @GetMapping("/{chatId}/users")
-    @JsonView(ViewsConfig.Public::class)
-    fun getAllChatUsers(@PathVariable chatId: String) = chatService.retrieveAllChatUsers(chatId)
-
-    @GetMapping("/{chatId}/users/{userId}")
-    @JsonView(ViewsConfig.Public::class)
-
-    fun getChatUser(@PathVariable chatId: String, @PathVariable userId: String) = chatService.retrieverChatUser(chatId,userId)
-
-    //
-    // Chat GetMappings
-    //
-
-    @GetMapping("{chatId}/messages")
-    @JsonView(ViewsConfig.Public::class)
-    fun getChatMessages(@PathVariable chatId: String) = chatService.retrieveAllChatMessages(chatId)
-
-    @GetMapping("{chatId}/messages/{messageBody}")
-    @JsonView(ViewsConfig.Public::class)
-    fun searchChatMessages(
         @PathVariable chatId: String,
-        @PathVariable messageBody: String
-    ) = chatService.searchChatMessages(chatId,messageBody)
+        @RequestBody request: MessageRequest
 
-    // Patch Mappings
+    ) = userManager.createMessage(chatId, request)
+
 
     @PatchMapping("/{chatId}")
+    @JsonView(ViewsConfig.Public::class)
     fun patchChatName(@PathVariable chatId: String, @RequestBody chatName: String) = chatService.editChatName(chatId,chatName)
 
     @PatchMapping("/{chatId}/users/{userId}")
+    @JsonView(ViewsConfig.Public::class)
     fun patchChatUser(
         @PathVariable chatId: String,
         @PathVariable userId:String
     ) = chatService.removeChatUser(chatId,userId)
 
     @PatchMapping("/{chatId}/messages/{messageId}")
+    @JsonView(ViewsConfig.Public::class)
     fun patchChatMessage(
         @PathVariable chatId: String,
-        @PathVariable messageId: Long,
+        @PathVariable messageId: String,
         @RequestBody newMessageBody: String
     ) = chatService.editChatMessage(chatId,messageId,newMessageBody)
 
 
     @DeleteMapping("/{chatId}")
+    @JsonView(ViewsConfig.Public::class)
     fun deleteChat(@PathVariable chatId: String) = chatService.deleteChat(chatId)
 }

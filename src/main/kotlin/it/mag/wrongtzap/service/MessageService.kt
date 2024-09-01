@@ -1,10 +1,8 @@
 package it.mag.wrongtzap.service
 
 import it.mag.wrongtzap.model.Message
-import it.mag.wrongtzap.repository.ChatRepository
 import it.mag.wrongtzap.repository.MessageRepository
-import it.mag.wrongtzap.repository.UserRepository
-import it.mag.wrongtzap.request.MessageRequest
+
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -20,13 +18,14 @@ class MessageService @Autowired constructor(
 
     //Retrieve method
     fun retrieveByKeyword(keyword: String) = messageRepository.findByMessageBody(keyword)
-    fun retrieveById(id: Long) = messageRepository.findById(id)
+    fun retrieveById(messageId: String) = messageRepository.findById(messageId)
+    fun retrieveAll() = messageRepository.findAll()
 
 
     //Update method
     @Transactional
-    fun updateMessage(id: Long, newBody: String): Message{
-        val message = messageRepository.findById(id).orElseThrow{NullPointerException("Message not found")}
+    fun updateMessage(messageId: String, newBody: String): Message{
+        val message = messageRepository.findById(messageId).orElseThrow{NullPointerException("Message not found")}
 
         message.apply {
             messageBody = newBody
@@ -38,8 +37,8 @@ class MessageService @Autowired constructor(
 
     //Delete method
     @Transactional
-    fun deleteMessage(id :Long): Message {
-        val message = messageRepository.findById(id).orElseThrow{NullPointerException("Message not found")}
+    fun deleteMessage(messageId: String): Message {
+        val message = messageRepository.findById(messageId).orElseThrow{NullPointerException("Message not found")}
 
         message.apply{
             messageBody = "This message has been deleted"

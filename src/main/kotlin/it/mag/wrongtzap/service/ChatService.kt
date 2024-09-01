@@ -45,7 +45,7 @@ class ChatService @Autowired constructor(
     //Retrieve Methods
     //
 
-    fun retrieveChat(chatId: String) = chatRepository.findById(chatId)
+    fun retrieveChat(chatId: String) = chatRepository.findById(chatId).orElseThrow { NullPointerException("Chat Not Found") }
     fun retrieveAllChats() = chatRepository.findAll()
 
 
@@ -61,14 +61,13 @@ class ChatService @Autowired constructor(
 
 
 
-    fun retrieveAllChatMessages(chatId: String): MutableList<Message>{
+    fun retrieveAllChatMessages(chatId: String): MutableList<Message>?{
         val chat = chatRepository.findById(chatId).orElseThrow { NullPointerException("Chat Not Found") }
         return chat.chatMessages
     }
-    fun searchChatMessages(chatId: String, body: String): List<Message>{
+    fun searchChatMessages(chatId: String, body: String): List<Message>?{
         val chat = chatRepository.findById(chatId).orElseThrow { NullPointerException("Chat Not Found") }
         return chat.chatMessages.filter{ it.messageBody.contains(body)}
-
     }
 
     //
@@ -95,7 +94,7 @@ class ChatService @Autowired constructor(
     }
 
     @Transactional
-    fun editChatMessage(chatId: String, messageId: Long, newBody:String){
+    fun editChatMessage(chatId: String, messageId: String, newBody:String){
         val chat = chatRepository.findById(chatId).orElseThrow { NullPointerException("Chat Not Found") }
         chat.chatMessages.first{ it.messageId == messageId}.apply { messageBody = newBody }
         chatRepository.save(chat)
