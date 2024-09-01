@@ -2,16 +2,19 @@ package it.mag.wrongtzap.jwt
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.security.Key
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.Date
 
 @Component
-class JwtUtil {
-
-    private val secretKey: Key = Keys.secretKeyFor(SignatureAlgorithm.HS256)
+class JwtUtil(
+    @Value("\${jwt.secret}")
+    private val secretKey: String
+) {
 
     fun generateToken(userId: String): String {
         val claims = HashMap<String, Any>()
@@ -23,8 +26,8 @@ class JwtUtil {
             .setClaims(claims)
             .setSubject(userId)
             .setIssuedAt(Date(System.currentTimeMillis()))
-            .setExpiration(Date(System.currentTimeMillis() * 1000 * 60 * 60 * 5 ))
-            .signWith(secretKey)
+            .setExpiration(convertLocalDateTimeNowToDate())
+            .signWith(Keys.hmacShaKeyFor(secretKey.encodeToByteArray()))
             .compact()
     }
 
@@ -52,8 +55,17 @@ class JwtUtil {
     }
 
     private fun extractAllClaims(token: String): Claims{
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJwt(token).body
+        return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.encodeToByteArray())).build().parse(token).body as Claims
     }
 
+    private fun convertLocalDateTimeNowToDate() = Date(
+        LocalDateTime.now()
+            .atZone(
+                ZoneId.of("CET")
+            )
+            .plusHours(5)
+            .toInstant()
+            .toEpochMilli()
+    )
 
 }

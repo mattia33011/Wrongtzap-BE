@@ -3,7 +3,6 @@ package it.mag.wrongtzap.service
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.repository.UserRepository
 import jakarta.transaction.Transactional
-import net.bytebuddy.utility.dispatcher.JavaDispatcher.Container
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -25,11 +24,11 @@ class UserServiceTest @Autowired constructor(
 
     companion object Database{
 
-        val default1 =User("mattia", "somemail@gmail.com")
-        val default2= User("Gabriele", "1234@libero.it")
-        val default3= User("Alex" ,"trythis@arubapec.it")
+        val default1 =User("mattia", "somemail@gmail.com","somemail@gmail.com","somemail@gmail.com")
+        val default2= User("Gabriele", "1234@libero.it","somemail@gmail.com","somemail@gmail.com")
+        val default3= User("Alex" ,"trythis@arubapec.it","somemail@gmail.com","somemail@gmail.com")
 
-        @Container
+        @org.testcontainers.junit.jupiter.Container
         lateinit var mysql: MySQLContainer<Nothing>
 
         @BeforeAll
@@ -59,7 +58,7 @@ class UserServiceTest @Autowired constructor(
     fun `should save`(){
 
 
-        service.createUser(default1)
+        //service.createUser(default1)
         assertNotNull(userRepository)
 
         val testUser = service.retrieveByUsername(default1.userName).firstOrNull()

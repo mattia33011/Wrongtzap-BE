@@ -22,7 +22,6 @@ import kotlin.jvm.Throws
 @EnableMethodSecurity
 class SecurityConfig @Autowired constructor(
     private val jwtAuthenticationFilter: AuthenticationFilter,
-    private val userDetailsService: UserDetailsService
 ) {
 
     @Bean
@@ -35,9 +34,12 @@ class SecurityConfig @Autowired constructor(
     fun SecurityFilterChain(http: HttpSecurity): SecurityFilterChain{
         http
             .authorizeHttpRequests{ auth ->
-                auth.requestMatchers("/auth").permitAll()
+                auth
+                    .requestMatchers("/noauth/**").permitAll()
                     .anyRequest().authenticated()
             }
+            .cors{ it.disable() }
+            .csrf { it.disable() }
             .sessionManagement{ session ->
                 session.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS)

@@ -8,8 +8,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
+@Component
 class AuthenticationFilter @Autowired constructor(
     private val jwtUtil: JwtUtil,
     private val userDetailsService: UserDetailsService
@@ -21,7 +23,7 @@ class AuthenticationFilter @Autowired constructor(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val authHeader = request.getHeader("auth")
+        val authHeader = request.getHeader("Authorization")
         val jwt: String?
         val userId: String?
 

@@ -25,10 +25,6 @@ class UserController @Autowired constructor(
     private val userManager: UserManager
 ) {
 
-    @PostMapping
-    @JsonView(ViewsConfig.Public::class)
-    fun postUser(@RequestBody userRequest: UserRequest) = userService.createUser(userRequest)
-
     @PostMapping("/{userId}/chats")
     @JsonView(ViewsConfig.Public::class)
     fun postUserChat(
