@@ -19,7 +19,7 @@ class UserRepositoryTest(
     fun repositoryTest(){
         val user = userRepository.findByUserName("Mattia").firstOrNull()
         assertNotNull(user)
-        assertEquals("Mattia", user.userName)
-        assertEquals("Mattia.iaria30@gmail.com", user.userMail)
+        assertEquals("Mattia", user.username)
+        assertEquals("Mattia.iaria30@gmail.com", user.email)
     }
 }

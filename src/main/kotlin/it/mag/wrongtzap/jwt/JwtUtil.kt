@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.Date
 
 @Component
@@ -21,17 +20,22 @@ class JwtUtil(
         return createToken(claims, userId)
     }
 
-    private fun createToken(claims: Map<String, Any>, userId: String): String {
+    private fun createToken(claims: Map<String, Any>, userMail: String): String {
         return Jwts.builder()
             .setClaims(claims)
-            .setSubject(userId)
+            .setSubject(userMail)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(convertLocalDateTimeNowToDate())
             .signWith(Keys.hmacShaKeyFor(secretKey.encodeToByteArray()))
             .compact()
     }
 
-    fun extractUserId(token: String): String{
+    fun fullTokenToMail(bearer: String): String{
+        val token = bearer.substring(7)
+        return extractUserMail(token)
+    }
+
+    fun extractUserMail(token: String): String{
         return extractClaim(token, Claims::getSubject)
     }
 
@@ -40,7 +44,7 @@ class JwtUtil(
     }
 
     fun isValidToken(token: String, userId: String): Boolean{
-        val extractedUsername = extractUserId(token)
+        val extractedUsername = extractUserMail(token)
         return extractedUsername == userId && (!isTokenExpired(token))
     }
 

@@ -1,20 +1,27 @@
+
 extend type Query{
     Chat (chatId: String!): Chat!
     everyChat: [Chat!]
 }
 
-
+scalar LocalDateTime
 
 type Chat{
 
     chatId: String!
-    chatName: String!
-    chatParticipants : [UserSummary]!
-    chatMessages: [MessageSummary!]
+    name: String!
+    participants : [UserSummary]!
+    participantsDate: [JoinDate!]!
+    messages: [MessageSummary!]
+    isGroup: Boolean!
 }
 
+type JoinDate{
+    userId: String!
+    timestamp: LocalDateTime!
+}
 
 type ChatSummary{
-    chatName: String!
+    name: String!
     chatId: String!
 }

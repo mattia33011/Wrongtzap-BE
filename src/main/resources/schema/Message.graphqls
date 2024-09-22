@@ -7,13 +7,15 @@ extend type Query{
 type Message{
 
     messageId: String!
-    messageTime: String!
-    messageBody: String!
-    messageSender: String!
-    messageChat: String!
+    timestamp: LocalDateTime!
+    content: String!
+    sender: String!
+    associatedChat: String!
+    deleteForUser: [String]!
 }
 
 type MessageSummary{
-    messageSender: String!
-    messageBody: String!
+    sender: String!
+    content: String!
+    timestamp: LocalDateTime!
 }

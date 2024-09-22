@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MessageRepository: JpaRepository<Message,String> {
-    fun findByMessageBody(body: String): List<Message>
+    fun findByContent(body: String): List<Message>
 
 }

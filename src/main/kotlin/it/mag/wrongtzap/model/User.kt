@@ -1,5 +1,6 @@
 package it.mag.wrongtzap.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
 import it.mag.wrongtzap.util.IdGenUtil
@@ -15,28 +16,25 @@ data class User(
     var userId: String = "",
 
     @JsonView(ViewsConfig.Public::class)
-    var userName: String,
+    var username: String,
 
     @JsonView(ViewsConfig.Public::class)
-    var userMail: String,
+    var email: String,
 
-    @JsonView(ViewsConfig.Public::class)
-    val userPassword: String,
+    @JsonView(ViewsConfig.Internal::class)
+    var password: String,
 ){
 
     @Id
     @PrePersist
     fun userInit() {
         if (userId.isEmpty()) {
-            userId = IdGenUtil.generateUserId(userName)
+            userId = IdGenUtil.generateUserId(username)
         }
     }
 
-    @ManyToMany(mappedBy = "chatParticipants", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToMany(mappedBy = "participants", cascade = [CascadeType.ALL])
     @JsonView(ViewsConfig.Internal::class)
-    var userChats: MutableSet<Chat> = mutableSetOf()
-
-    @OneToMany(mappedBy = "messageSender")
-    @JsonView(ViewsConfig.Internal::class)
-    val userMessages: MutableSet<Message> = mutableSetOf()
+    @JsonBackReference("User-Chats")
+    var chats: MutableSet<Chat> = mutableSetOf()
 }

@@ -61,7 +61,7 @@ class UserServiceTest @Autowired constructor(
         //service.createUser(default1)
         assertNotNull(userRepository)
 
-        val testUser = service.retrieveByUsername(default1.userName).firstOrNull()
+        val testUser = service.retrieveByUsername(default1.username).firstOrNull()
         assertNotNull(testUser)
 
     }

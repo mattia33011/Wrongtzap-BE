@@ -1,5 +1,6 @@
 package it.mag.wrongtzap.service
 
+import it.mag.wrongtzap.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.repository.MessageRepository
 
@@ -13,22 +14,23 @@ class MessageService @Autowired constructor(
 )
 {
     //Create method
-    fun createMessage(message: Message) = messageRepository.save(message)
+    fun saveMessage(message: Message) = messageRepository.save(message)
 
 
     //Retrieve method
-    fun retrieveByKeyword(keyword: String) = messageRepository.findByMessageBody(keyword)
+    fun retrieveByKeyword(keyword: String) = messageRepository.findByContent(keyword)
     fun retrieveById(messageId: String) = messageRepository.findById(messageId)
     fun retrieveAll() = messageRepository.findAll()
 
 
     //Update method
     @Transactional
-    fun updateMessage(messageId: String, newBody: String): Message{
-        val message = messageRepository.findById(messageId).orElseThrow{NullPointerException("Message not found")}
+    fun editMessage(messageId: String, newBody: String): Message{
+        val message = messageRepository.findById(messageId)
+            .orElseThrow{ MessageNotFoundException() }
 
         message.apply {
-            messageBody = newBody
+            content = newBody
         }
 
         return messageRepository.save(message)
@@ -38,10 +40,11 @@ class MessageService @Autowired constructor(
     //Delete method
     @Transactional
     fun deleteMessage(messageId: String): Message {
-        val message = messageRepository.findById(messageId).orElseThrow{NullPointerException("Message not found")}
+        val message = messageRepository.findById(messageId)
+            .orElseThrow{MessageNotFoundException()}
 
         message.apply{
-            messageBody = "This message has been deleted"
+            content = "This message has been deleted"
         }
 
         return messageRepository.save(message)

@@ -1,12 +1,12 @@
 package it.mag.wrongtzap.jwt
 
+import it.mag.wrongtzap.service.UserDetailService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class AuthenticationFilter @Autowired constructor(
     private val jwtUtil: JwtUtil,
-    private val userDetailsService: UserDetailsService
+    private val userDetailService: UserDetailService
 
 ): OncePerRequestFilter()
 {
@@ -25,16 +25,16 @@ class AuthenticationFilter @Autowired constructor(
     ) {
         val authHeader = request.getHeader("Authorization")
         val jwt: String?
-        val userId: String?
+        val userMail: String?
 
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             jwt = authHeader.substring(7)
-            userId = jwtUtil.extractUserId(jwt)
+            userMail = jwtUtil.extractUserMail(jwt)
 
-            if (userId != null && SecurityContextHolder.getContext().authentication == null){
-                val userDetails = userDetailsService.loadUserByUsername(userId)
+            if (userMail != null && SecurityContextHolder.getContext().authentication == null){
+                val userDetails = userDetailService.loadUserByEmail(userMail)
 
-                if(jwtUtil.isValidToken(jwt, userDetails.username)){
+                if(jwtUtil.isValidToken(jwt, userDetails.getEmail())){
                     val authToken = UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.authorities
                     )

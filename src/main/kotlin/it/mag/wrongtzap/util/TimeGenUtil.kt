@@ -9,8 +9,8 @@ object TimeGenUtil{
         return LocalDateTime.now().format(format)
     }
 
-    fun minutesFormat(): String{
-        val format = DateTimeFormatter.ofPattern("dd/MM/yy-HH:mm")
-        return LocalDateTime.now().format(format)
-    }
+//    fun minutesFormat(): String{
+//        val format = DateTimeFormatter.ofPattern("dd/MM/yy-HH:mm")
+//        return LocalDateTime.now().format(format)
+//    }
 }

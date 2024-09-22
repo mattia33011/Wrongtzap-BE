@@ -6,7 +6,12 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UserRepository: JpaRepository<User, String>{
-    fun findByUserName(UserId: String): List<User>
-    fun deleteByUserNameAndUserMail(userName: String, userMail: String): User
+
+    fun findByUsername(UserId: String): List<User>
+    fun findByPasswordAndEmail(userPassword: String, userMail: String): User
+    fun findByEmail(userMail: String): User?
+    fun deleteByUsernameAndEmail(userName: String, userMail: String): User
 
 }
+
+
