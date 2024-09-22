@@ -3,8 +3,8 @@ package it.mag.wrongtzap.controller
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
 import it.mag.wrongtzap.manager.UserManager
-import it.mag.wrongtzap.request.LoginRequest
-import it.mag.wrongtzap.request.UserRequest
+import it.mag.wrongtzap.controller.web.request.LoginRequest
+import it.mag.wrongtzap.controller.web.request.UserRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 

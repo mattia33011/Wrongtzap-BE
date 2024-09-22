@@ -1,6 +1,6 @@
 package it.mag.wrongtzap.service
 
-import it.mag.wrongtzap.exception.chat.ChatNotFoundException
+import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.repository.ChatRepository
@@ -20,26 +20,13 @@ class ChatService @Autowired constructor(
 
     fun saveChat(chat: Chat) = chatRepository.save(chat)
 
-    @Transactional
-    fun addUserToChat(chatId: String, user: User): Chat{
-        val chat = chatRepository.findById(chatId)
-            .orElseThrow{ ChatNotFoundException() }
-
-        chat.apply {
-            userJoinDates.put(user, LocalDateTime.now())
-            participants.add(user)
-        }
-
-        return chatRepository.save(chat)
-    }
-
     
     //
     //Retrieve Methods
     //
 
     fun retrieveChatById(chatId: String) = chatRepository.findById(chatId)
-        .orElseThrow { ChatNotFoundException() }
+        .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
     fun retrieveAllChats() = chatRepository.findAll()
 
@@ -47,7 +34,7 @@ class ChatService @Autowired constructor(
     @Transactional
     fun editChatName(chatId: String, newName: String){
         val chat = chatRepository.findById(chatId)
-            .orElseThrow{ ChatNotFoundException() }
+            .orElseThrow{ it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
         chat.apply {
             name = newName
@@ -59,7 +46,7 @@ class ChatService @Autowired constructor(
     @Transactional
     fun leaveGroup(chatId: String, userMail: String): Chat{
         val chat = chatRepository.findById(chatId)
-            .orElseThrow { ChatNotFoundException() }
+            .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
         chat.participants.removeIf { it.email==userMail }
         return chatRepository.save(chat)
@@ -68,7 +55,7 @@ class ChatService @Autowired constructor(
     @Transactional
     fun removeUser(chatId: String, userId: String): Chat{
         val chat = chatRepository.findById(chatId)
-            .orElseThrow{ ChatNotFoundException()}
+            .orElseThrow{ it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
         chat.participants.removeIf{ it.userId== userId}
         return chatRepository.save(chat)
@@ -77,7 +64,7 @@ class ChatService @Autowired constructor(
     @Transactional
     fun editMessage(chatId: String, messageId: String, newBody:String){
         val chat = chatRepository.findById(chatId)
-            .orElseThrow { ChatNotFoundException() }
+            .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
         chat.messages.first{ it.messageId == messageId}.apply { content = newBody }
         chatRepository.save(chat)

@@ -3,8 +3,8 @@ package it.mag.wrongtzap.unit
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import it.mag.wrongtzap.exception.chat.ChatNotFoundException
-import it.mag.wrongtzap.exception.message.MessageNotFoundException
+import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
+import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
@@ -57,7 +57,7 @@ class UserServiceUnit {
             assertEquals(returnedChat, mockChat1)
         }
         else {
-            assertThrows<ChatNotFoundException> {
+            assertThrows<it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException> {
                 userService.retrieveChat("someId", someChatId)
             }
         }
@@ -114,7 +114,7 @@ class UserServiceUnit {
             }
         }
         else{
-            assertThrows<MessageNotFoundException> {
+            assertThrows<it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException> {
                 userService.searchMessages("someId", search)
             }
         }

@@ -5,7 +5,7 @@ import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
 import graphql.schema.DataFetchingEnvironment
-import it.mag.wrongtzap.exception.message.MessageNotFoundException
+import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.service.MessageService
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +27,7 @@ class MessageDataFetcher @Autowired constructor(
     @DgsData(parentType = "Message", field = "sender")
     fun getUser(dfe: DataFetchingEnvironment): String {
 
-        val message = dfe.getSource<Message>() ?: throw MessageNotFoundException()
+        val message = dfe.getSource<Message>() ?: throw it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException()
 
         return message.sender.userId
 
@@ -35,7 +35,7 @@ class MessageDataFetcher @Autowired constructor(
 
     @DgsData(parentType = "Message", field = "associatedChat")
     fun getChat(dfe: DataFetchingEnvironment): String{
-        val message = dfe.getSource<Message>() ?: throw MessageNotFoundException()
+        val message = dfe.getSource<Message>() ?: throw it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException()
 
         return message.associatedChat.chatId
     }

@@ -3,8 +3,8 @@ package it.mag.wrongtzap.fetcher
 import com.netflix.graphql.dgs.*
 import graphql.schema.DataFetchingEnvironment
 import it.mag.wrongtzap.model.User
-import it.mag.wrongtzap.response.ChatResponse
-import it.mag.wrongtzap.response.MessageResponse
+import it.mag.wrongtzap.controller.web.response.ChatResponse
+import it.mag.wrongtzap.controller.web.response.MessageResponse
 import it.mag.wrongtzap.service.UserService
 
 import org.springframework.beans.factory.annotation.Autowired

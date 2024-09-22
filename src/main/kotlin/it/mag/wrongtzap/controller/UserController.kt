@@ -5,9 +5,9 @@ import it.mag.wrongtzap.config.ViewsConfig
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.manager.UserManager
-import it.mag.wrongtzap.request.ChatRequest
-import it.mag.wrongtzap.request.NewPasswordRequest
-import it.mag.wrongtzap.request.UserRequest
+import it.mag.wrongtzap.controller.web.request.ChatRequest
+import it.mag.wrongtzap.controller.web.request.NewPasswordRequest
+import it.mag.wrongtzap.controller.web.request.UserRequest
 import it.mag.wrongtzap.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity

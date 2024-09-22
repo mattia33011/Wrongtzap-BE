@@ -35,6 +35,7 @@ class SecurityConfig @Autowired constructor(
             .authorizeHttpRequests{ auth ->
                 auth
                     .requestMatchers("/noauth/**").permitAll()
+                    .requestMatchers("/chats/**").permitAll()
                     .anyRequest().authenticated()
             }
             .cors{ it.disable() }

@@ -1,8 +1,5 @@
 package it.mag.wrongtzap.service
 
-import it.mag.wrongtzap.exception.chat.ChatNotFoundException
-import it.mag.wrongtzap.exception.message.MessageNotFoundException
-import it.mag.wrongtzap.exception.user.*
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
@@ -26,7 +23,7 @@ class UserService(
     fun retrieveByUsername(username: String) = userRepository.findByUsername(username)
     fun retrieveById(userId: String): User {
         val user = userRepository.findById(userId).orElseThrow{
-            UserNotFoundException()
+            it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException()
         }
         return user
     }
@@ -38,11 +35,11 @@ class UserService(
     fun retrieveChat(userId: String, chatId: String): Chat{
 
         val user = userRepository.findById(userId).orElseThrow {
-            UserNotFoundException("User not found")
+            it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException("User not found")
         }
 
         val chat = user.chats.firstOrNull { it.chatId==chatId }
-            ?: throw ChatNotFoundException("Chat not found")
+            ?: throw it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException("Chat not found")
 
         return chat
     }
@@ -50,7 +47,7 @@ class UserService(
     fun searchMessages(userId: String, messageBody: String): MutableList<Message>{
 
         val user = userRepository.findById(userId)
-            .orElseThrow{ UserNotFoundException("User Does not exist") }
+            .orElseThrow{ it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException("User Does not exist") }
 
         val messages: MutableList<Message> = mutableListOf()
 
@@ -61,14 +58,14 @@ class UserService(
         return if (messages.isNotEmpty())
             messages
         else
-            throw MessageNotFoundException("")
+            throw it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException("")
     }
 
 
     @Transactional
     fun editUserName(userMail: String, newName: String): User{
         val user: User = userRepository.findByEmail(userMail)
-            ?: throw UserNotFoundException()
+            ?: throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException()
 
 
         user.apply {
@@ -82,7 +79,7 @@ class UserService(
     @Transactional
     fun deleteUser(userMail: String): User{
         val user = userRepository.findByEmail(userMail)
-            ?: throw UserNotFoundException()
+            ?: throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException()
 
         userRepository.deleteByUsernameAndEmail(user.username, user.email)
         return user

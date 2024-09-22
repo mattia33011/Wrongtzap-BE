@@ -4,14 +4,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import it.mag.wrongtzap.exception.chat.InvalidChatnameFormatException
+import it.mag.wrongtzap.controller.web.exception.chat.InvalidChatnameFormatException
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.manager.UserManager
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.User
-import it.mag.wrongtzap.request.ChatRequest
-import it.mag.wrongtzap.request.LoginRequest
-import it.mag.wrongtzap.request.MessageRequest
+import it.mag.wrongtzap.controller.web.request.ChatRequest
+import it.mag.wrongtzap.controller.web.request.LoginRequest
+import it.mag.wrongtzap.controller.web.request.MessageRequest
 import it.mag.wrongtzap.service.ChatService
 import it.mag.wrongtzap.service.EmailService
 import it.mag.wrongtzap.service.MessageService
@@ -141,7 +141,7 @@ class UserManagerUnit {
             verify(exactly = 1) { chatService.saveChat(any()) }
         }
         else{
-            assertThrows<InvalidChatnameFormatException> {
+            assertThrows<it.mag.wrongtzap.controller.web.exception.chat.InvalidChatnameFormatException> {
                 userManager.createChat(chatRequest)
             }
         }

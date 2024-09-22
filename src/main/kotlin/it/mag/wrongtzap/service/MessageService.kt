@@ -1,6 +1,6 @@
 package it.mag.wrongtzap.service
 
-import it.mag.wrongtzap.exception.message.MessageNotFoundException
+import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.repository.MessageRepository
 
@@ -27,7 +27,7 @@ class MessageService @Autowired constructor(
     @Transactional
     fun editMessage(messageId: String, newBody: String): Message{
         val message = messageRepository.findById(messageId)
-            .orElseThrow{ MessageNotFoundException() }
+            .orElseThrow{ it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException() }
 
         message.apply {
             content = newBody
@@ -41,7 +41,7 @@ class MessageService @Autowired constructor(
     @Transactional
     fun deleteMessage(messageId: String): Message {
         val message = messageRepository.findById(messageId)
-            .orElseThrow{MessageNotFoundException()}
+            .orElseThrow{ it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException() }
 
         message.apply{
             content = "This message has been deleted"
