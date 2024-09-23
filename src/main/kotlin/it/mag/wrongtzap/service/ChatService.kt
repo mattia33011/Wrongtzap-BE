@@ -22,7 +22,7 @@ class ChatService @Autowired constructor(
     //Retrieve Methods
     //
 
-    fun retrieveChatById(chatId: String) = chatRepository.findById(chatId)
+    fun retrieveChatById(chatId: String): Chat = chatRepository.findById(chatId)
         .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
     fun retrieveAllChats() = chatRepository.findAll()

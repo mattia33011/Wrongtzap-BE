@@ -1,5 +1,9 @@
 package it.mag.wrongtzap.util
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+
 object MailFormUtil {
     val loginForm = "<!DOCTYPE html>" +
             "<html>" +
@@ -23,3 +27,5 @@ object MailFormUtil {
             "</body>" +
             "</html>"
 }
+
+val EmailCoroutineScope = CoroutineScope(Dispatchers.IO + Job())

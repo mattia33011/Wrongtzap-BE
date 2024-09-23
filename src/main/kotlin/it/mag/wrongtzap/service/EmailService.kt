@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class EmailService @Autowired constructor(
-    val emailSender: JavaMailSender
+    val emailSender: JavaMailSender,
 ) {
+
     fun sendLoginNotification(receiverMail: String, receiverId: String){
 
         val message = emailSender.createMimeMessage()

@@ -7,11 +7,12 @@ import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
-import it.mag.wrongtzap.service.ChatService
-import it.mag.wrongtzap.service.EmailService
-import it.mag.wrongtzap.service.MessageService
-import it.mag.wrongtzap.service.UserService
+import it.mag.wrongtzap.service.*
+import it.mag.wrongtzap.util.EmailCoroutineScope
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -169,8 +170,10 @@ class UserManager @Autowired constructor(
         val authenticated = passwordMatch(userCredentials.userPassword, user.password)
 
         if(authenticated){
-            //emailService.sendLoginNotification(user.email,user.userId)
-            return jwtUtil.generateToken(user.userId)
+            EmailCoroutineScope.launch {
+                emailService.sendLoginNotification(user.email,user.userId)
+            }
+            return jwtUtil.generateToken(user.email)
         }
         else{
             throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInAuthentication("Email and/or Password are incorrect")
