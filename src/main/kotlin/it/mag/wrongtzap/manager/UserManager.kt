@@ -1,7 +1,6 @@
 package it.mag.wrongtzap.manager
 
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
-import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.controller.web.request.*
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.Chat
@@ -10,9 +9,7 @@ import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.service.*
 import it.mag.wrongtzap.util.EmailCoroutineScope
 import jakarta.transaction.Transactional
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -21,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class UserManager @Autowired constructor(
