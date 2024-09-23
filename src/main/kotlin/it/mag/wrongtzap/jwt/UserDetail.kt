@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails
 data class UserDetail(
 
     private val username: String,
-    private val email : String,
+    private val userId : String,
     private val password: String,
     private val enabled: Boolean,
     private val roles: List<String>
@@ -20,7 +20,7 @@ data class UserDetail(
 
     override fun getPassword(): String = password
 
-    fun getEmail(): String = email
+    fun getId(): String = userId
 
     override fun getUsername(): String = username
 

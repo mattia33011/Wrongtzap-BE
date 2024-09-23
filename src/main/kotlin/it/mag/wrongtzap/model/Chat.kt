@@ -19,7 +19,8 @@ data class Chat (
     @JsonView(ViewsConfig.Public::class)
     var name: String,
 
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+
+    @ManyToMany
     @JoinTable(
         name = "chatParticipants",
         joinColumns = [JoinColumn(name = "chat_id")],
@@ -36,9 +37,9 @@ data class Chat (
         joinColumns = [JoinColumn(name = "chat_id")]
     )
     @MapKeyJoinColumn(name = "user_id")
-    @Column(name = "join_date")
+    @Column(name = "join_date",)
     @JsonView(ViewsConfig.Public::class)
-    val userJoinDates: MutableMap<User, LocalDateTime>,
+    val userJoinDates: MutableMap<String, LocalDateTime>,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "associatedChat")
     @JsonView(ViewsConfig.Internal::class)

@@ -1,6 +1,7 @@
 package it.mag.wrongtzap.manager
 
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
+import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.controller.web.request.*
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.Chat
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class UserManager @Autowired constructor(
@@ -76,7 +78,7 @@ class UserManager @Autowired constructor(
             )
         }
 
-        val joinDates = participants.associateWith { LocalDateTime.now() }.toMutableMap()
+        val joinDates = participants.map { user -> user.userId  }.associateWith { LocalDateTime.now() }.toMutableMap()
 
         val newChat = Chat(
             name = chatRequest.chatName,
@@ -99,7 +101,7 @@ class UserManager @Autowired constructor(
 
 
         chat.apply {
-            userJoinDates.put(user, LocalDateTime.now())
+            userJoinDates[userId] = LocalDateTime.now()
             participants.add(user)
         }
 
@@ -131,7 +133,7 @@ class UserManager @Autowired constructor(
         val userEmail = jwt.subject
 
         val chat = chatService.retrieveChatById(chatId)
-            ?: throw (it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException())
+            ?: throw (ChatNotFoundException())
 
         val message = chat.messages.firstOrNull{ it.messageId == messageId}
             ?: throw (it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException())
@@ -148,7 +150,7 @@ class UserManager @Autowired constructor(
     @Transactional
     fun deleteMessageForEveryone(chatId: String, messageId: String){
         val chat = chatService.retrieveChatById(chatId)
-            ?: throw (it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException())
+            ?: throw (ChatNotFoundException())
 
         val message = chat.messages.firstOrNull{ it.messageId == messageId}
             ?: throw (it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException())
@@ -167,17 +169,16 @@ class UserManager @Autowired constructor(
         val authenticated = passwordMatch(userCredentials.userPassword, user.password)
 
         if(authenticated){
-            emailService.sendLoginNotification(user.email,user.userId)
-            return jwtUtil.generateToken(user.email)
+            //emailService.sendLoginNotification(user.email,user.userId)
+            return jwtUtil.generateToken(user.userId)
         }
         else{
             throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInAuthentication("Email and/or Password are incorrect")
         }
     }
 
-    fun changePassword(userMail: String, newPasswordRequest: NewPasswordRequest): ResponseEntity<Any>{
-        val user = userService.retrieveByEmail(userMail)
-            ?: throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException("User does not exist")
+    fun changePassword(userId: String, newPasswordRequest: NewPasswordRequest): ResponseEntity<Any>{
+        val user = userService.retrieveById(userId)
 
         val auth = passwordMatch(newPasswordRequest.oldPassword, user.password)
 

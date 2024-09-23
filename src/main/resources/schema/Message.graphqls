@@ -11,10 +11,10 @@ type Message{
     content: String!
     sender: String!
     associatedChat: String!
-    deleteForUser: [String]!
+    deletedForUser: [String]!
 }
 
-type MessageSummary{
+type MessageResponse{
     sender: String!
     content: String!
     timestamp: LocalDateTime!

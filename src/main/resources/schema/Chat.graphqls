@@ -12,7 +12,7 @@ type Chat{
     name: String!
     participants : [UserSummary]!
     participantsDate: [JoinDate!]!
-    messages: [MessageSummary!]
+    messages: [MessageResponse!]
     isGroup: Boolean!
 }
 

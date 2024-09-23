@@ -25,16 +25,16 @@ class AuthenticationFilter @Autowired constructor(
     ) {
         val authHeader = request.getHeader("Authorization")
         val jwt: String?
-        val userMail: String?
+        val userId: String?
 
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             jwt = authHeader.substring(7)
-            userMail = jwtUtil.extractUserMail(jwt)
+            userId = jwtUtil.extractUserId(jwt)
 
-            if (userMail != null && SecurityContextHolder.getContext().authentication == null){
-                val userDetails = userDetailService.loadUserByEmail(userMail)
+            if (userId != null && SecurityContextHolder.getContext().authentication == null){
+                val userDetails = userDetailService.loadUserByUserId(userId)
 
-                if(jwtUtil.isValidToken(jwt, userDetails.getEmail())){
+                if(jwtUtil.isValidToken(jwt, userDetails.getId())){
                     val authToken = UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.authorities
                     )

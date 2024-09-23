@@ -9,15 +9,13 @@ import graphql.schema.DataFetchingEnvironment
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInChat
 import it.mag.wrongtzap.model.Chat
-import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.controller.web.response.JoinDateResponse
 import it.mag.wrongtzap.controller.web.response.MessageResponse
 import it.mag.wrongtzap.controller.web.response.UserResponse
+import it.mag.wrongtzap.jwt.UserDetail
 import it.mag.wrongtzap.service.ChatService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.jwt.Jwt
-import java.time.LocalDateTime
 
 @DgsComponent
 class ChatDataFetcher @Autowired constructor(
@@ -51,30 +49,31 @@ class ChatDataFetcher @Autowired constructor(
     fun getJoinDate(dfe: DataFetchingEnvironment): List<JoinDateResponse>{
 
         val chat = dfe.getSource<Chat>() ?: throw it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException()
-        return chat.userJoinDates.map { JoinDateResponse(userId = it.key.userId, it.value) }
+        return chat.userJoinDates.map { JoinDateResponse(userId = it.key, it.value) }
     }
 
     @DgsData(parentType = "Chat", field = "messages")
     fun getMessages(dfe: DataFetchingEnvironment): List<MessageResponse>{
 
         val authentication = SecurityContextHolder.getContext().authentication
-        val jwt = authentication.principal as Jwt
-        val userEmail = jwt.subject
+        val jwt = authentication.principal as UserDetail
+        val userId = jwt.getId()
 
-        val chat = dfe.getSource<Chat>() ?: throw it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException()
-        val user = chat.participants.firstOrNull{ user -> user.email == userEmail }
-            ?: throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInChat()
+        val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
+        val user = chat.participants.firstOrNull{ user -> user.userId== userId}
+            ?: throw UserNotFoundInChat()
 
         val responseList = chat.messages.filter { message ->
             !message.deletedForEveryone &&
                         !message.deletedForUser.contains(user.userId) &&
-                        message.timestamp.isAfter(chat.userJoinDates.get(user)
+                        message.timestamp.isAfter(
+                            chat.userJoinDates[user.userId]
                         )
         }
             .map { message ->
                 MessageResponse(
-                    messageSender = message.sender.userId,
-                    messageBody = message.content,
+                    sender = message.sender.userId,
+                    content = message.content,
                     timestamp = message.timestamp
                 )
             }

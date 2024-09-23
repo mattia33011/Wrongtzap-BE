@@ -3,15 +3,11 @@ package it.mag.wrongtzap.controller
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
 import it.mag.wrongtzap.jwt.JwtUtil
-import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.controller.web.request.ChatRequest
 import it.mag.wrongtzap.service.ChatService
 import it.mag.wrongtzap.manager.UserManager
 import it.mag.wrongtzap.controller.web.request.MessageRequest
-import jakarta.mail.internet.ContentType
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -33,7 +29,7 @@ class ChatController @Autowired constructor(
     @JsonView(ViewsConfig.Public::class)
     fun postChat(@RequestBody chatRequest: ChatRequest) = userManager.createChat(chatRequest)
 
-    @PatchMapping("/{chatId}/users/{userId}", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @PatchMapping("/{chatId}/users/{userId}")
     @JsonView(ViewsConfig.Public::class)
     fun postChatUser(
 
@@ -68,7 +64,7 @@ class ChatController @Autowired constructor(
         @PathVariable chatId: String,
         @RequestHeader("Authorization") token: String
 
-    ) = chatService.leaveGroup(chatId,jwtUtil.fullTokenToMail(token))
+    ) = chatService.leaveGroup(chatId,jwtUtil.fullTokenToId(token))
 
     @PatchMapping("/{chatId}/messages/{messageId}/self")
     fun deleteMessageForSelf(
@@ -83,7 +79,8 @@ class ChatController @Autowired constructor(
     ) = userManager.deleteMessageForEveryone(chatId,messageId)
 
 
-    @PatchMapping("/{chatId}/users/{userId}")
+    @DeleteMapping("/{chatId}/users/{userId}")
+    @JsonView(ViewsConfig.Internal::class)
     fun removeChatUser(
 
         @PathVariable chatId: String,

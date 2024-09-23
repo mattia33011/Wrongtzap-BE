@@ -20,22 +20,22 @@ class JwtUtil(
         return createToken(claims, userId)
     }
 
-    private fun createToken(claims: Map<String, Any>, userMail: String): String {
+    private fun createToken(claims: Map<String, Any>, userId: String): String {
         return Jwts.builder()
             .setClaims(claims)
-            .setSubject(userMail)
+            .setSubject(userId)
             .setIssuedAt(Date(System.currentTimeMillis()))
             .setExpiration(convertLocalDateTimeNowToDate())
             .signWith(Keys.hmacShaKeyFor(secretKey.encodeToByteArray()))
             .compact()
     }
 
-    fun fullTokenToMail(bearer: String): String{
+    fun fullTokenToId(bearer: String): String{
         val token = bearer.substring(7)
-        return extractUserMail(token)
+        return extractUserId(token)
     }
 
-    fun extractUserMail(token: String): String{
+    fun extractUserId(token: String): String{
         return extractClaim(token, Claims::getSubject)
     }
 
@@ -44,7 +44,7 @@ class JwtUtil(
     }
 
     fun isValidToken(token: String, userId: String): Boolean{
-        val extractedUsername = extractUserMail(token)
+        val extractedUsername = extractUserId(token)
         return extractedUsername == userId && (!isTokenExpired(token))
     }
 

@@ -1,13 +1,10 @@
 package it.mag.wrongtzap.service
 
-import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.model.Chat
-import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.repository.ChatRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class ChatService @Autowired constructor(
@@ -44,11 +41,12 @@ class ChatService @Autowired constructor(
     }
 
     @Transactional
-    fun leaveGroup(chatId: String, userMail: String): Chat{
+    fun leaveGroup(chatId: String, userId: String): Chat{
         val chat = chatRepository.findById(chatId)
             .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
-        chat.participants.removeIf { it.email==userMail }
+        chat.participants.removeIf { it.userId==userId }
+        chat.userJoinDates.remove(userId)
         return chatRepository.save(chat)
     }
 
@@ -58,6 +56,7 @@ class ChatService @Autowired constructor(
             .orElseThrow{ it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
         chat.participants.removeIf{ it.userId== userId}
+        chat.userJoinDates.remove(userId)
         return chatRepository.save(chat)
     }
 
