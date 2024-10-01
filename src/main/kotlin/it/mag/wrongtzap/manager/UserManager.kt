@@ -2,6 +2,7 @@ package it.mag.wrongtzap.manager
 
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.controller.web.request.*
+import it.mag.wrongtzap.controller.web.response.LoginResponse
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
@@ -158,7 +159,7 @@ class UserManager @Autowired constructor(
     }
 
 
-    fun login(userCredentials: LoginRequest): String{
+    fun login(userCredentials: LoginRequest): LoginResponse{
 
         val user =  userService.retrieveByEmail(userCredentials.userMail)
             ?: throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException("User does not exist")
@@ -169,7 +170,7 @@ class UserManager @Autowired constructor(
             EmailCoroutineScope.launch {
                 emailService.sendLoginNotification(user.email,user.userId)
             }
-            return jwtUtil.generateToken(user.email)
+            return LoginResponse(jwtUtil.generateToken(user.email), user.email)
         }
         else{
             throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInAuthentication("Email and/or Password are incorrect")

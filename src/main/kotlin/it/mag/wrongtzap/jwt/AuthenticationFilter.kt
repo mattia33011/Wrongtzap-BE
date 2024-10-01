@@ -18,6 +18,7 @@ class AuthenticationFilter @Autowired constructor(
 
 ): OncePerRequestFilter()
 {
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
