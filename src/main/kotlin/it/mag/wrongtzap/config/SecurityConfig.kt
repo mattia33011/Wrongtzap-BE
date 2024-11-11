@@ -14,7 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import kotlin.jvm.Throws
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @Configuration
 @EnableWebSecurity
@@ -29,16 +32,29 @@ class SecurityConfig @Autowired constructor(
     }
 
     @Bean
+    fun corsConfigurer(): WebMvcConfigurer {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry.addMapping("/**")
+                    .allowedOrigins("http://localhost:4200")
+                    .allowedMethods("*")
+                    .allowedHeaders("Authorization", "Content-type")
+                    .exposedHeaders("Authorization")
+                    .allowCredentials(true).maxAge(3600);
+            }
+        }
+    }
+
+    @Bean
     @Throws(Exception::class)
     fun SecurityFilterChain(http: HttpSecurity): SecurityFilterChain{
         http
             .authorizeHttpRequests{ auth ->
                 auth
                     .requestMatchers("/noauth/**").permitAll()
-                    .requestMatchers("/chats/**").permitAll()
+                    .requestMatchers("/session/**").permitAll()
                     .anyRequest().authenticated()
             }
-            .cors{ it.disable() }
             .csrf { it.disable() }
             .sessionManagement{ session ->
                 session.sessionCreationPolicy(

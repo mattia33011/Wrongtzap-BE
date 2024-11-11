@@ -16,7 +16,6 @@ class AuthController @Autowired constructor(
     @PostMapping("/login")
     fun login(@RequestBody userCredentials: LoginRequest) = userManager.login(userCredentials)
 
-
     @PostMapping("/register")
     @JsonView(ViewsConfig.Public::class)
     fun register(@RequestBody userRequest: UserRequest) = userManager.createUser(userRequest)

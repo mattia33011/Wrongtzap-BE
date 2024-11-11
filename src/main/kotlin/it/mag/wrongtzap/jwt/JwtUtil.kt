@@ -15,9 +15,9 @@ class JwtUtil(
     private val secretKey: String
 ) {
 
-    fun generateToken(userId: String): String {
+    fun generateToken(userEmail: String): String {
         val claims = HashMap<String, Any>()
-        return createToken(claims, userId)
+        return createToken(claims, userEmail)
     }
 
     private fun createToken(claims: Map<String, Any>, userId: String): String {
@@ -25,30 +25,31 @@ class JwtUtil(
             .setClaims(claims)
             .setSubject(userId)
             .setIssuedAt(Date(System.currentTimeMillis()))
-            .setExpiration(convertLocalDateTimeNowToDate())
+            .setExpiration(Date(System.currentTimeMillis() + (60 * 60 * 10 * 1000)))
             .signWith(Keys.hmacShaKeyFor(secretKey.encodeToByteArray()))
             .compact()
     }
 
-    fun fullTokenToId(bearer: String): String{
+    fun tokenToSubject(bearer: String): String{
         val token = bearer.substring(7)
-        return extractUserId(token)
+        return extractSubject(token)
     }
 
-    fun extractUserId(token: String): String{
+    fun extractSubject(token: String): String{
         return extractClaim(token, Claims::getSubject)
     }
+
 
     fun isTokenExpired(token: String): Boolean{
         return extractExpiration(token).before(Date())
     }
 
-    fun isValidToken(token: String, userId: String): Boolean{
-        val extractedUsername = extractUserId(token)
-        return extractedUsername == userId && (!isTokenExpired(token))
+    fun isValidToken(token: String, userEmail: String): Boolean{
+        val extractedUsername = extractSubject(token)
+        return extractedUsername == userEmail && (!isTokenExpired(token))
     }
 
-    private fun extractExpiration(token: String): Date{
+    fun extractExpiration(token: String): Date{
         return extractClaim(token, Claims::getExpiration)
     }
 

@@ -28,6 +28,7 @@ logging:
         security: DEBUG
 
 jwt:
+  #forgive us father for we have sinned
   secret: wrongtzapp-application-jwt-secret-key-hs256
 
 

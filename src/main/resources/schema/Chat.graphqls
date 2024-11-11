@@ -10,7 +10,7 @@ type Chat{
 
     chatId: String!
     name: String!
-    participants : [UserSummary]!
+    participants : [UserResponse]!
     participantsDate: [JoinDate!]!
     messages: [MessageResponse!]
     isGroup: Boolean!
@@ -21,7 +21,7 @@ type JoinDate{
     timestamp: LocalDateTime!
 }
 
-type ChatSummary{
+type ChatResponse{
     name: String!
     chatId: String!
 }

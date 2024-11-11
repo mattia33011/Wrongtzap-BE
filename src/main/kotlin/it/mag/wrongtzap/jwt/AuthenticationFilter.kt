@@ -29,7 +29,7 @@ class AuthenticationFilter @Autowired constructor(
 
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             jwt = authHeader.substring(7)
-            userId = jwtUtil.extractUserId(jwt)
+            userId = jwtUtil.extractSubject(jwt)
 
             if (userId != null && SecurityContextHolder.getContext().authentication == null){
                 val userDetails = userDetailService.loadUserByUserId(userId)

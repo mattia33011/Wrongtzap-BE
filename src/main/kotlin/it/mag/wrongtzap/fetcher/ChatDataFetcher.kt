@@ -60,7 +60,7 @@ class ChatDataFetcher @Autowired constructor(
         val userId = jwt.getId()
 
         val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
-        val user = chat.participants.firstOrNull{ user -> user.userId== userId}
+        val user = chat.participants.firstOrNull{ user -> user.email == userId}
             ?: throw UserNotFoundInChat()
 
         val responseList = chat.messages.filter { message ->

@@ -64,7 +64,7 @@ class ChatController @Autowired constructor(
         @PathVariable chatId: String,
         @RequestHeader("Authorization") token: String
 
-    ) = chatService.leaveGroup(chatId,jwtUtil.fullTokenToId(token))
+    ) = chatService.leaveGroup(chatId,jwtUtil.tokenToSubject(token))
 
     @PatchMapping("/{chatId}/messages/{messageId}/self")
     fun deleteMessageForSelf(

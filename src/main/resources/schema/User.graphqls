@@ -8,10 +8,10 @@ type User {
     userId: String!
     username: String!
     email: String!
-    chats: [ChatSummary!]
+    chats: [ChatResponse!]
 }
 
-type UserSummary{
+type UserResponse{
     userId: String!
     username: String!
     email: String!

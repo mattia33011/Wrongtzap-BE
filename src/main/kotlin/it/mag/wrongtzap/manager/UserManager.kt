@@ -1,7 +1,9 @@
 package it.mag.wrongtzap.manager
 
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
+import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.controller.web.request.*
+import it.mag.wrongtzap.controller.web.response.TokenResponse
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
@@ -10,6 +12,7 @@ import it.mag.wrongtzap.service.*
 import it.mag.wrongtzap.util.EmailCoroutineScope
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.launch
+import org.antlr.v4.runtime.Token
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -32,7 +35,7 @@ class UserManager @Autowired constructor(
 ) {
     private val passwordFormat = Regex("^[\\w+_!()?*\\-\\[\\]{}]{8,20}$")
     private val usernameFormat = Regex("\\w{6,20}")
-    private val emailFormat = Regex("^\\w+@[a-zA-Z_]+\\.[a-zA-Z]{2,}$")
+    private val emailFormat = Regex("^[\\w.]+@[a-zA-Z_]+\\.[a-zA-Z]{2,}$")
     private val chatNameFormat = Regex("^[\\w\\s]{1,100}\$")
 
     //Create method
@@ -158,10 +161,10 @@ class UserManager @Autowired constructor(
     }
 
 
-    fun login(userCredentials: LoginRequest): String{
+    fun login(userCredentials: LoginRequest): TokenResponse{
 
         val user =  userService.retrieveByEmail(userCredentials.userMail)
-            ?: throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException("User does not exist")
+            ?: throw UserNotFoundException("")
 
         val authenticated = passwordMatch(userCredentials.userPassword, user.password)
 
@@ -169,7 +172,8 @@ class UserManager @Autowired constructor(
             EmailCoroutineScope.launch {
                 emailService.sendLoginNotification(user.email,user.userId)
             }
-            return jwtUtil.generateToken(user.email)
+            val token = jwtUtil.generateToken(user.email)
+            return TokenResponse(token = token)
         }
         else{
             throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInAuthentication("Email and/or Password are incorrect")

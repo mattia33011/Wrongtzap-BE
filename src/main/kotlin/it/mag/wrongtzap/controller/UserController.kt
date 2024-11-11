@@ -36,19 +36,19 @@ class UserController @Autowired constructor(
     fun patchUserName(
         @RequestHeader("Authorization") token: String,
         @RequestBody userName: String
-    ) = userService.editUserName(jwtUtil.fullTokenToId(token), userName)
+    ) = userService.editUserName(jwtUtil.tokenToSubject(token), userName)
 
     @PatchMapping("/password")
     fun patchUserPassword(
         @RequestHeader("Authorization") token: String,
         @RequestBody newPasswordRequest: NewPasswordRequest,
-    ) = userManager.changePassword(jwtUtil.fullTokenToId(token), newPasswordRequest)
+    ) = userManager.changePassword(jwtUtil.tokenToSubject(token), newPasswordRequest)
 
 
     @DeleteMapping("/delete")
     @JsonView(ViewsConfig.Public::class)
     fun deleteUser(
         @RequestHeader("Authorization") token: String
-    ) = userService.deleteUser(jwtUtil.fullTokenToId(token))
+    ) = userService.deleteUser(jwtUtil.tokenToSubject(token))
 
 }
