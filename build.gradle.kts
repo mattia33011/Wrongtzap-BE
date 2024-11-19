@@ -73,6 +73,10 @@ dependencies {
 
 	// Coroutines
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+
+	implementation("io.reactivex.rxjava3:rxjava:3.1.5")
+	implementation ("org.springframework:spring-messaging")
+
 }
 
 kotlin {

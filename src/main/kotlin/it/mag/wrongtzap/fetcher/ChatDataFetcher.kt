@@ -1,9 +1,9 @@
 package it.mag.wrongtzap.fetcher
 
-
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsQuery
+import com.netflix.graphql.dgs.DgsSubscription
 import com.netflix.graphql.dgs.InputArgument
 import graphql.schema.DataFetchingEnvironment
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
@@ -16,10 +16,12 @@ import it.mag.wrongtzap.jwt.UserDetail
 import it.mag.wrongtzap.service.ChatService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
+import reactor.core.publisher.Flux
+import java.util.*
 
 @DgsComponent
 class ChatDataFetcher @Autowired constructor(
-    private val chatService: ChatService
+    private val chatService: ChatService,
 ) {
     @DgsQuery(field = "Chat")
     fun getChat(@InputArgument chatId: String) = chatService.retrieveChatById(chatId)
@@ -29,7 +31,7 @@ class ChatDataFetcher @Autowired constructor(
 
     @DgsData(parentType = "Chat", field = "participants")
     fun getUsers(dfe: DataFetchingEnvironment):Set<UserResponse>{
-        val chat = dfe.getSource<Chat>() ?: throw it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException()
+        val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
 
             val responseList: MutableSet<UserResponse> = mutableSetOf()
 
@@ -48,7 +50,7 @@ class ChatDataFetcher @Autowired constructor(
     @DgsData(parentType = "Chat", field = "participantsDate")
     fun getJoinDate(dfe: DataFetchingEnvironment): List<JoinDateResponse>{
 
-        val chat = dfe.getSource<Chat>() ?: throw it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException()
+        val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
         return chat.userJoinDates.map { JoinDateResponse(userId = it.key, it.value) }
     }
 
@@ -57,29 +59,29 @@ class ChatDataFetcher @Autowired constructor(
 
         val authentication = SecurityContextHolder.getContext().authentication
         val jwt = authentication.principal as UserDetail
-        val userId = jwt.getId()
+        val email = jwt.getId()
 
         val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
-        val user = chat.participants.firstOrNull{ user -> user.email == userId}
+        val user = chat.participants.firstOrNull{ user -> user.email == email}
             ?: throw UserNotFoundInChat()
 
         val responseList = chat.messages.filter { message ->
             !message.deletedForEveryone &&
-                        !message.deletedForUser.contains(user.userId) &&
-                        message.timestamp.isAfter(
-                            chat.userJoinDates[user.userId]
-                        )
+                    Date(message.timestamp ).after(Date(chat.userJoinDates[user.userId] ?: throw UserNotFoundInChat())) &&
+                    (message.deletedForUser.isNotEmpty() || !message.deletedForUser.contains(user.userId))
         }
             .map { message ->
                 MessageResponse(
                     sender = message.sender.userId,
                     content = message.content,
-                    timestamp = message.timestamp
+                    chatId = message.associatedChat.chatId,
+                    timestamp = message.timestamp.toFloat()
                 )
             }
 
         return responseList
 
     }
+
 
 }

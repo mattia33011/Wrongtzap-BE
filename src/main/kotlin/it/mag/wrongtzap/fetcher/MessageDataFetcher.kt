@@ -1,18 +1,14 @@
 package it.mag.wrongtzap.fetcher
 
-import com.netflix.graphql.dgs.DgsComponent
-import com.netflix.graphql.dgs.DgsData
-import com.netflix.graphql.dgs.DgsQuery
-import com.netflix.graphql.dgs.InputArgument
+import com.netflix.graphql.dgs.*
 import graphql.schema.DataFetchingEnvironment
-import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.service.MessageService
 import org.springframework.beans.factory.annotation.Autowired
 
 @DgsComponent
 class MessageDataFetcher @Autowired constructor(
-    val messageService: MessageService
+    val messageService: MessageService,
 ) {
 
     @DgsQuery(field = "Message")
@@ -39,9 +35,4 @@ class MessageDataFetcher @Autowired constructor(
 
         return message.associatedChat.chatId
     }
-
-
-
-
-
 }

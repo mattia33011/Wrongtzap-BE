@@ -3,13 +3,15 @@ package it.mag.wrongtzap.fetcher
 import com.netflix.graphql.dgs.*
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.controller.web.response.ChatResponse
+import it.mag.wrongtzap.service.Mapper
 import it.mag.wrongtzap.service.UserService
 
 import org.springframework.beans.factory.annotation.Autowired
 
 @DgsComponent
 class UserDataFetcher @Autowired constructor(
-    private val userService: UserService
+    private val userService: UserService,
+    private val conversionService: Mapper,
 ) {
 
     @DgsQuery(field = "user")
@@ -28,12 +30,7 @@ class UserDataFetcher @Autowired constructor(
             val responseList: MutableSet<ChatResponse> = mutableSetOf()
 
             user.chats.forEach { chat ->
-                responseList.add(
-                    ChatResponse(
-                        name = chat.name,
-                        chatId = chat.chatId
-                    )
-                )
+                responseList.add(conversionService.chatToResponse(chat))
             }
 
             return responseList

@@ -36,7 +36,7 @@ class SecurityConfig @Autowired constructor(
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:4200")
+                    .allowedOrigins("http://localhost:4200", "http://localhost:8080")
                     .allowedMethods("*")
                     .allowedHeaders("Authorization", "Content-type")
                     .exposedHeaders("Authorization")
@@ -51,8 +51,8 @@ class SecurityConfig @Autowired constructor(
         http
             .authorizeHttpRequests{ auth ->
                 auth
-                    .requestMatchers("/noauth/**").permitAll()
-                    .requestMatchers("/session/**").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/ws").permitAll()
                     .anyRequest().authenticated()
             }
             .csrf { it.disable() }
@@ -61,7 +61,7 @@ class SecurityConfig @Autowired constructor(
                     SessionCreationPolicy.STATELESS)
             }
 
-        http.addFilterBefore(jwtAuthenticationFilter,UsernamePasswordAuthenticationFilter::class.java)
+       http.addFilterBefore(jwtAuthenticationFilter,UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
     }
 

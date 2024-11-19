@@ -3,7 +3,10 @@ package it.mag.wrongtzap.manager
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.controller.web.request.*
-import it.mag.wrongtzap.controller.web.response.TokenResponse
+import it.mag.wrongtzap.controller.web.response.ChatResponse
+import it.mag.wrongtzap.controller.web.response.MessageResponse
+import it.mag.wrongtzap.controller.web.response.UserResponse
+import it.mag.wrongtzap.jwt.Token
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
@@ -12,7 +15,6 @@ import it.mag.wrongtzap.service.*
 import it.mag.wrongtzap.util.EmailCoroutineScope
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.launch
-import org.antlr.v4.runtime.Token
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -20,50 +22,50 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class UserManager @Autowired constructor(
     private val messageService: MessageService,
     private val userService: UserService,
     private val chatService: ChatService,
+    private val conversionService: Mapper,
     private val emailService: EmailService,
 
     private val passwordEncoder: PasswordEncoder,
     private val jwtUtil: JwtUtil,
 
-) {
+    ) {
     private val passwordFormat = Regex("^[\\w+_!()?*\\-\\[\\]{}]{8,20}$")
     private val usernameFormat = Regex("\\w{6,20}")
     private val emailFormat = Regex("^[\\w.]+@[a-zA-Z_]+\\.[a-zA-Z]{2,}$")
     private val chatNameFormat = Regex("^[\\w\\s]{1,100}\$")
 
     //Create method
-    fun createUser(userRequest: UserRequest): User {
+    fun createUser(registerRequest: RegisterRequest): User {
 
         //Checks for invalid credentials format
-        if(!passwordFormat.matches(userRequest.userPassword))
+        if(!passwordFormat.matches(registerRequest.userPassword))
             throw it.mag.wrongtzap.controller.web.exception.user.InvalidPasswordFormatException("Provided password does not conform to standard format")
-        if (!usernameFormat.matches(userRequest.userName))
+        if (!usernameFormat.matches(registerRequest.userName))
             throw it.mag.wrongtzap.controller.web.exception.user.InvalidUsernameFormatException("Provided username does not conform to standard format")
-        if (!emailFormat.matches(userRequest.userMail))
+        if (!emailFormat.matches(registerRequest.userMail))
             throw it.mag.wrongtzap.controller.web.exception.user.InvalidEmailFormatException("Provided email is invalid")
 
         //check for already existing user
-        if(userService.retrieveByEmail(userRequest.userMail) != null)
+        if(userService.retrieveByEmail(registerRequest.userMail) != null)
             throw it.mag.wrongtzap.controller.web.exception.user.UserAlreadyExistsException("User already exist")
 
         val user = User(
-            username = userRequest.userName,
-            email = userRequest.userMail.lowercase(),
-            password = passwordEncoder.encode(userRequest.userPassword)
+            username = registerRequest.userName,
+            email = registerRequest.userMail.lowercase(),
+            password = passwordEncoder.encode(registerRequest.userPassword)
         )
 
         return userService.saveUser(user)
     }
 
     @Transactional
-    fun createChat(chatRequest: ChatRequest): Chat {
+    fun createChat(chatRequest: ChatRequest): ChatResponse {
 
         if(!chatNameFormat.matches(chatRequest.chatName))
             throw it.mag.wrongtzap.controller.web.exception.chat.InvalidChatnameFormatException()
@@ -78,50 +80,51 @@ class UserManager @Autowired constructor(
             )
         }
 
-        val joinDates = participants.map { user -> user.userId  }.associateWith { LocalDateTime.now() }.toMutableMap()
+        val joinDates = participants.map { user -> user.userId  }.associateWith { System.currentTimeMillis() }.toMutableMap()
 
-        val newChat = Chat(
+        val chat = Chat(
             name = chatRequest.chatName,
             participants = participants,
             userJoinDates = joinDates,
             isGroup = chatRequest.isGroup
         )
 
-        return chatService.saveChat(newChat)
-
+        chatService.saveChat(chat)
+        return conversionService.chatToResponse(chat)
     }
 
 
     @Transactional
-    fun addUserToChat(chatId: String, userId: String): Chat{
+    fun addUserToChat(chatId: String, userId: String): UserResponse {
         val chat = chatService.retrieveChatById(chatId)
-            ?: throw ChatNotFoundException()
 
         val user = userService.retrieveById(userId)
 
-
         chat.apply {
-            userJoinDates[userId] = LocalDateTime.now()
+            userJoinDates[userId] = System.currentTimeMillis()
             participants.add(user)
         }
 
-        return chatService.saveChat(chat)
+        chatService.saveChat(chat)
+        return conversionService.userToResponse(user)
     }
 
 
     @Transactional
-    fun createMessage(chatId: String, request: MessageRequest): Message{
+    fun createMessage(request: MessageRequest): MessageResponse{
 
         val sender = userService.retrieveById(request.userId)
-        val chat = chatService.retrieveChatById(chatId)
+        val chat = chatService.retrieveChatById(request.chatId)
 
         val message = Message(
             sender = sender,
-            content = request.messageBody,
+            content = request.body,
             associatedChat = chat,
+            timestamp = request.timestamp
         )
 
-        return messageService.saveMessage(message)
+        messageService.saveMessage(message)
+        return conversionService.messageToResponse(message)
     }
 
 
@@ -133,7 +136,6 @@ class UserManager @Autowired constructor(
         val userEmail = jwt.subject
 
         val chat = chatService.retrieveChatById(chatId)
-            ?: throw (ChatNotFoundException())
 
         val message = chat.messages.firstOrNull{ it.messageId == messageId}
             ?: throw (it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException())
@@ -161,7 +163,7 @@ class UserManager @Autowired constructor(
     }
 
 
-    fun login(userCredentials: LoginRequest): TokenResponse{
+    fun login(userCredentials: LoginRequest): Token {
 
         val user =  userService.retrieveByEmail(userCredentials.userMail)
             ?: throw UserNotFoundException("")
@@ -173,7 +175,7 @@ class UserManager @Autowired constructor(
                 emailService.sendLoginNotification(user.email,user.userId)
             }
             val token = jwtUtil.generateToken(user.email)
-            return TokenResponse(token = token)
+            return Token(jwt = token)
         }
         else{
             throw it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInAuthentication("Email and/or Password are incorrect")

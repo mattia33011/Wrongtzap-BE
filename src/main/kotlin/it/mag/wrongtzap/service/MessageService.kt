@@ -1,12 +1,14 @@
 package it.mag.wrongtzap.service
 
 import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
+import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.repository.MessageRepository
 
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class MessageService @Autowired constructor(
@@ -36,6 +38,7 @@ class MessageService @Autowired constructor(
         return messageRepository.save(message)
 
     }
+
 
     //Delete method
     @Transactional

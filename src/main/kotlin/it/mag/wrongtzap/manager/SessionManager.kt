@@ -1,12 +1,11 @@
 package it.mag.wrongtzap.manager
 
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
-import it.mag.wrongtzap.controller.web.response.TokenResponse
-import it.mag.wrongtzap.controller.web.response.UserDisplayResponse
+import it.mag.wrongtzap.jwt.Token
+import it.mag.wrongtzap.controller.web.response.ProfileResponse
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -16,33 +15,33 @@ class SessionManager @Autowired constructor(
     private val userService: UserService,
 )
 {
-    fun getDisplayData(token: TokenResponse): UserDisplayResponse{
-        val email = jwtUtil.extractSubject(token.token)
+    fun fetchProfile(token: Token): ProfileResponse{
+        val email = jwtUtil.extractSubject(token.jwt)
 
         val user = userService.retrieveByEmail(email)
             ?: throw UserNotFoundException()
 
-        return UserDisplayResponse(
+        return ProfileResponse(
             username = user.username,
             userId = user.userId
         )
     }
 
-    fun checkExpiration(tokenResponse: TokenResponse): TokenResponse{
+    fun checkExpiration(token: Token): Token {
         val expirationDate = Date(System.currentTimeMillis() + 60 * 10 * 1000)
-        val tokenExpiration = jwtUtil.extractExpiration(tokenResponse.token)
+        val tokenExpiration = jwtUtil.extractExpiration(token.jwt)
 
         val expired = tokenExpiration.before(expirationDate)
 
         return if(expired)
-            refreshToken(tokenResponse)
+            refreshToken(token)
         else
-            tokenResponse
+            token
     }
 
-    fun refreshToken(token: TokenResponse): TokenResponse{
-        val subject = jwtUtil.extractSubject(token.token)
-        return TokenResponse(jwtUtil.generateToken(subject))
+    fun refreshToken(token: Token): Token {
+        val subject = jwtUtil.extractSubject(token.jwt)
+        return Token(jwtUtil.generateToken(subject))
     }
 
 }

@@ -19,7 +19,7 @@ data class Message(
 
     @Column(updatable = false)
     @JsonView(ViewsConfig.Public::class)
-    var timestamp: LocalDateTime = LocalDateTime.now(),
+    var timestamp: Long,
 
     @JsonView(ViewsConfig.Public::class)
     var content: String,

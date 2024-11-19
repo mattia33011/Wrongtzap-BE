@@ -39,7 +39,7 @@ data class Chat (
     @MapKeyJoinColumn(name = "user_id")
     @Column(name = "join_date",)
     @JsonView(ViewsConfig.Public::class)
-    val userJoinDates: MutableMap<String, LocalDateTime>,
+    val userJoinDates: MutableMap<String, Long>,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "associatedChat")
     @JsonView(ViewsConfig.Internal::class)

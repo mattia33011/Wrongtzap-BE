@@ -5,9 +5,8 @@ extend type Query{
 }
 
 type Message{
-
     messageId: String!
-    timestamp: LocalDateTime!
+    timestamp: Float!
     content: String!
     sender: String!
     associatedChat: String!
@@ -17,5 +16,6 @@ type Message{
 type MessageResponse{
     sender: String!
     content: String!
-    timestamp: LocalDateTime!
+    timestamp: Float!
 }
+
