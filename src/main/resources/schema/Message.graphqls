@@ -1,0 +1,21 @@
+extend type Query{
+    Message(messageId: String!): Message!
+    searchMessage(messageBody: String!): [Message!]
+    everyMessage: [Message!]
+}
+
+type Message{
+    messageId: String!
+    timestamp: Float!
+    content: String!
+    sender: String!
+    associatedChat: String!
+    deletedForUser: [String]!
+}
+
+type MessageResponse{
+    sender: String!
+    content: String!
+    timestamp: Float!
+}
+

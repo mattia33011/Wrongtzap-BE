@@ -1,0 +1,21 @@
+type Query{
+    user(userId: String!): User!
+    everyUser: [User!]
+}
+
+type User {
+    userId: String!
+    username: String!
+    email: String!
+    chats: [ChatResponse!]
+}
+
+type UserResponse{
+    userId: String!
+    username: String!
+    email: String!
+}
+
+
+
+

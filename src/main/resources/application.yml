@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: wrongtzap
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/users?createDatabaseIfNotExist=true&useSSL=true
+    username: root
+    password: root
+  mail:
+    host: localhost
+    port: 1025
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+jwt:
+  #forgive us father for we have sinned
+  secret: wrongtzapp-application-jwt-secret-key-hs256
+
+
+
+
