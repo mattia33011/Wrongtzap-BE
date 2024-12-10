@@ -1,9 +1,6 @@
 package it.mag.wrongtzap.service
 
-import it.mag.wrongtzap.controller.web.response.ChatResponse
-import it.mag.wrongtzap.controller.web.response.JoinDateResponse
-import it.mag.wrongtzap.controller.web.response.MessageResponse
-import it.mag.wrongtzap.controller.web.response.UserResponse
+import it.mag.wrongtzap.controller.web.response.*
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
@@ -18,7 +15,7 @@ class Mapper {
             chatId = chat.chatId,
             isGroup = chat.isGroup,
             messages = chat.messages.map { message -> messageToResponse(message) }.toMutableList(),
-            users = chat.participants.map { user -> userToResponse(user) }.toMutableSet(),
+            users = chat.participants.map { user -> userToProfile(user) }.toMutableSet(),
             joinDate = chat.userJoinDates.map {
                 date -> JoinDateResponse(
                     userId = date.key,
@@ -31,9 +28,19 @@ class Mapper {
 
     fun userToResponse(user: User): UserResponse{
         val response = UserResponse(
+            userId = user.userId,
+            username = user.username,
+            chats = user.chats.map { chat -> chatToResponse(chat) }.toMutableSet(),
+            friends = user.friends.map { friend -> userToProfile(friend) }.toMutableSet()
+        )
+
+        return response
+    }
+
+    fun userToProfile(user: User): UserProfile{
+        val response = UserProfile(
             userId =  user.userId,
             username = user.username,
-            email = user.email
         )
         return response
     }
@@ -43,7 +50,8 @@ class Mapper {
             content = message.content,
             timestamp = message.timestamp,
             chatId = message.associatedChat.chatId,
-            sender = message.sender.userId
+            username = message.sender.username,
+            userId = message.sender.userId
         )
         return response
     }

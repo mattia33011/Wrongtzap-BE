@@ -6,14 +6,18 @@ type Query{
 type User {
     userId: String!
     username: String!
-    email: String!
-    chats: [ChatResponse!]
+    chats: [Chat!]
+    friends: [UserProfile!]
 }
 
-type UserResponse{
+type Profile{
+    username: String!
+    userId: String!
+}
+
+type UserProfile{
     userId: String!
     username: String!
-    email: String!
 }
 
 

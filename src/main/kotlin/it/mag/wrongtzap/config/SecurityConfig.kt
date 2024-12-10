@@ -36,7 +36,7 @@ class SecurityConfig @Autowired constructor(
         return object : WebMvcConfigurer {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://localhost:4200", "http://localhost:8080")
+                    .allowedOrigins("http://localhost:4200")
                     .allowedMethods("*")
                     .allowedHeaders("Authorization", "Content-type")
                     .exposedHeaders("Authorization")
@@ -52,7 +52,7 @@ class SecurityConfig @Autowired constructor(
             .authorizeHttpRequests{ auth ->
                 auth
                     .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/ws").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
                     .anyRequest().authenticated()
             }
             .csrf { it.disable() }

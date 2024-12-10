@@ -2,6 +2,8 @@ package it.mag.wrongtzap.service
 
 import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
+import it.mag.wrongtzap.controller.web.request.FriendRequest
+import it.mag.wrongtzap.controller.web.response.UserResponse
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
@@ -15,9 +17,8 @@ import kotlin.jvm.optionals.getOrNull
 class UserService(
     @Autowired
     private val userRepository: UserRepository,
+    private val mapper: Mapper
 ) {
-
-
     //Create method
     fun saveUser(user: User) = userRepository.save(user)
 
@@ -26,7 +27,7 @@ class UserService(
     fun retrieveByUsername(username: String) = userRepository.findByUsername(username)
     fun retrieveById(userId: String): User {
         val user = userRepository.findById(userId).orElseThrow{
-            it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException()
+            UserNotFoundException()
         }
         return user
     }
@@ -38,7 +39,7 @@ class UserService(
     fun retrieveChat(userId: String, chatId: String): Chat{
 
         val user = userRepository.findById(userId).orElseThrow {
-            it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException("User not found")
+            UserNotFoundException("User not found")
         }
 
         val chat = user.chats.firstOrNull { it.chatId==chatId }
@@ -55,7 +56,7 @@ class UserService(
         val messages: MutableList<Message> = mutableListOf()
 
         user.chats.forEach{ chat ->
-            messages.addAll(chat.messages.filter { it.content.contains(messageBody) })
+            messages.addAll( chat.messages.filter { it.content.contains(messageBody) })
         }
 
         return messages.ifEmpty {
@@ -63,6 +64,33 @@ class UserService(
         }
     }
 
+    @Transactional
+    fun addFriend(request: FriendRequest): Pair<UserResponse, UserResponse>{
+        val sender = userRepository.findById(request.senderId).orElseThrow { UserNotFoundException() }
+        val receiver = userRepository.findById(request.receiverId).orElseThrow { UserNotFoundException() }
+
+        sender.friends.add(receiver)
+        userRepository.save(sender)
+
+        return Pair(
+            first = mapper.userToResponse(sender),
+            second = mapper.userToResponse(receiver)
+        )
+    }
+
+    @Transactional
+    fun removeFriend(request: FriendRequest): Pair<UserResponse, UserResponse>{
+        val sender = userRepository.findById(request.senderId).orElseThrow { UserNotFoundException() }
+        val receiver = userRepository.findById(request.receiverId).orElseThrow { UserNotFoundException() }
+
+        sender.friends.remove(receiver)
+        userRepository.save(sender)
+
+        return Pair(
+            first = mapper.userToResponse(sender),
+            second = mapper.userToResponse(receiver)
+        )
+    }
 
     @Transactional
     fun editUserName(userId: String, newName: String): User{

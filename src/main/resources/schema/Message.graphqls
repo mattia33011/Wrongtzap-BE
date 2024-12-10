@@ -8,13 +8,15 @@ type Message{
     messageId: String!
     timestamp: Float!
     content: String!
-    sender: String!
+    username: String!
+    userId: String!
     associatedChat: String!
     deletedForUser: [String]!
 }
 
 type MessageResponse{
-    sender: String!
+    username: String!
+    userId: String!
     content: String!
     timestamp: Float!
 }

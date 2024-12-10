@@ -32,7 +32,7 @@ class AuthenticationFilter @Autowired constructor(
             jwt = authHeader.substring(7)
             userId = jwtUtil.extractSubject(jwt)
 
-            if (userId != null && SecurityContextHolder.getContext().authentication == null){
+            if (SecurityContextHolder.getContext().authentication == null){
                 val userDetails = userDetailService.loadUserByUserId(userId)
 
                 if(jwtUtil.isValidToken(jwt, userDetails.getId())){

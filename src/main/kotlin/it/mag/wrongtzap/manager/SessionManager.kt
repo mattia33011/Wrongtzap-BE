@@ -36,6 +36,7 @@ class SessionManager @Autowired constructor(
         return if(expired)
             refreshToken(token)
         else
+
             token
     }
 

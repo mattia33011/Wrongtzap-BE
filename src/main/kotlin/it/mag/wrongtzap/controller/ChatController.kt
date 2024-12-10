@@ -31,13 +31,14 @@ class ChatController @Autowired constructor(
 
     @MessageMapping("/create")
     @SendTo("/topic/chats")
-    fun createChat(@RequestBody chatRequest: ChatRequest) = userManager.createChat(chatRequest)
+    fun createChat(chatRequest: ChatRequest) = userManager.createChat(chatRequest)
 
     @MessageMapping("/{chatId}/users/{userId}/add")
     fun addUser(@DestinationVariable chatId: String, @DestinationVariable userId: String){
         val user = userManager.addUserToChat(chatId, userId)
-        template.convertAndSend("topic/chats/$chatId/users", user)
+        template.convertAndSend("topic/chats/users", user)
     }
+
 
     @MessageMapping("/message/add")
     fun postMessage(request: MessageRequest){
@@ -50,7 +51,7 @@ class ChatController @Autowired constructor(
     //
 
     @MessageMapping("/{chatId}/name")
-    fun editChat(@DestinationVariable chatId: String, @RequestBody chatName: String){
+    fun editChat(@DestinationVariable chatId: String, chatName: String){
         val chat = chatService.editChatName(chatId,chatName)
         template.convertAndSend("topic/chats", chat)
     }
@@ -60,11 +61,11 @@ class ChatController @Autowired constructor(
 
         @DestinationVariable chatId: String,
         @DestinationVariable messageId: String,
-        @RequestBody newMessageBody: String
+        newMessageBody: String
 
     ){
         val message = chatService.editMessage(chatId,messageId,newMessageBody)
-        template.convertAndSend("/topic/chats/messages")
+        template.convertAndSend("/topic/chats/messages", message)
     }
 
     //

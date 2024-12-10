@@ -5,7 +5,7 @@ import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.controller.web.request.*
 import it.mag.wrongtzap.controller.web.response.ChatResponse
 import it.mag.wrongtzap.controller.web.response.MessageResponse
-import it.mag.wrongtzap.controller.web.response.UserResponse
+import it.mag.wrongtzap.controller.web.response.UserProfile
 import it.mag.wrongtzap.jwt.Token
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.Chat
@@ -95,7 +95,7 @@ class UserManager @Autowired constructor(
 
 
     @Transactional
-    fun addUserToChat(chatId: String, userId: String): UserResponse {
+    fun addUserToChat(chatId: String, userId: String): UserProfile {
         val chat = chatService.retrieveChatById(chatId)
 
         val user = userService.retrieveById(userId)
@@ -106,7 +106,7 @@ class UserManager @Autowired constructor(
         }
 
         chatService.saveChat(chat)
-        return conversionService.userToResponse(user)
+        return conversionService.userToProfile(user)
     }
 
 

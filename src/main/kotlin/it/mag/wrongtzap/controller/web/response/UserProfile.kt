@@ -1,6 +1,6 @@
 package it.mag.wrongtzap.controller.web.response
 
-data class JoinDateResponse (
+data class UserProfile (
     val userId: String,
-    val timestamp: Long,
+    val username: String
 )

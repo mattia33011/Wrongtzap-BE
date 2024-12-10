@@ -4,7 +4,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
-import it.mag.wrongtzap.controller.web.exception.chat.InvalidChatnameFormatException
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.manager.UserManager
 import it.mag.wrongtzap.model.Chat
@@ -174,7 +173,7 @@ class UserManagerUnit {
         verify (exactly = 1){ chatService.retrieveChatById(chatId)}
         verify (exactly = 1){ messageService.saveMessage(any()) }
 
-        assertEquals(returnedMessage.sender.userId, userId)
+        assertEquals(returnedMessage.username.userId, userId)
         assertEquals(returnedMessage.content,messageBody)
         assertEquals(returnedMessage.associatedChat.chatId,chatId)
     }

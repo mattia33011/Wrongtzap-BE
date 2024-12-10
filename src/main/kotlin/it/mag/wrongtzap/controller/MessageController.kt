@@ -17,6 +17,5 @@ class MessageController @Autowired constructor(
 )
 {
     @DeleteMapping("/{messageId}")
-    @JsonView(ViewsConfig.Public::class)
     fun deleteMessage(@PathVariable messageId: String) = messageService.deleteMessage(messageId)
 }

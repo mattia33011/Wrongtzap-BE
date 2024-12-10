@@ -23,6 +23,14 @@ data class User(
 
     @JsonView(ViewsConfig.Internal::class)
     var password: String,
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_friends",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "friend_id")]
+    )
+    val friends: MutableSet<User> = mutableSetOf()
 ){
 
     @Id

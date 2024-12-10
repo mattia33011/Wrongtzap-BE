@@ -6,8 +6,8 @@ extend type Query{
 type Chat{
     chatId: String!
     name: String!
-    participants : [UserResponse]!
-    participantsDate: [Int!]!
+    participants : [UserProfile!]!
+    participantsDate: [JoinDateResponse!]!
     messages: [MessageResponse!]
     isGroup: Boolean!
 }
@@ -15,6 +15,11 @@ type Chat{
 type ChatResponse{
     name: String!
     chatId: String!
+}
+
+type JoinDateResponse{
+    userId: String!
+    timestamp: Int!
 }
 
 

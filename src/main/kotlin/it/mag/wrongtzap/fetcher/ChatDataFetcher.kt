@@ -3,7 +3,6 @@ package it.mag.wrongtzap.fetcher
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsData
 import com.netflix.graphql.dgs.DgsQuery
-import com.netflix.graphql.dgs.DgsSubscription
 import com.netflix.graphql.dgs.InputArgument
 import graphql.schema.DataFetchingEnvironment
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
@@ -11,12 +10,11 @@ import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInChat
 import it.mag.wrongtzap.model.Chat
 import it.mag.wrongtzap.controller.web.response.JoinDateResponse
 import it.mag.wrongtzap.controller.web.response.MessageResponse
-import it.mag.wrongtzap.controller.web.response.UserResponse
+import it.mag.wrongtzap.controller.web.response.UserProfile
 import it.mag.wrongtzap.jwt.UserDetail
 import it.mag.wrongtzap.service.ChatService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
-import reactor.core.publisher.Flux
 import java.util.*
 
 @DgsComponent
@@ -30,16 +28,15 @@ class ChatDataFetcher @Autowired constructor(
     fun getEveryChat() = chatService.retrieveAllChats()
 
     @DgsData(parentType = "Chat", field = "participants")
-    fun getUsers(dfe: DataFetchingEnvironment):Set<UserResponse>{
+    fun getUsers(dfe: DataFetchingEnvironment):Set<UserProfile>{
         val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
 
-            val responseList: MutableSet<UserResponse> = mutableSetOf()
+            val responseList: MutableSet<UserProfile> = mutableSetOf()
 
             chat.participants.forEach{ user ->
                 responseList.add(
-                    UserResponse(
+                    UserProfile(
                     userId = user.userId,
-                    email = user.email,
                     username = user.username
             )
                 )}
@@ -49,7 +46,6 @@ class ChatDataFetcher @Autowired constructor(
 
     @DgsData(parentType = "Chat", field = "participantsDate")
     fun getJoinDate(dfe: DataFetchingEnvironment): List<JoinDateResponse>{
-
         val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
         return chat.userJoinDates.map { JoinDateResponse(userId = it.key, it.value) }
     }
@@ -72,7 +68,8 @@ class ChatDataFetcher @Autowired constructor(
         }
             .map { message ->
                 MessageResponse(
-                    sender = message.sender.userId,
+                    username = message.sender.username,
+                    userId = message.sender.userId,
                     content = message.content,
                     chatId = message.associatedChat.chatId,
                     timestamp = message.timestamp.toFloat()
@@ -80,7 +77,6 @@ class ChatDataFetcher @Autowired constructor(
             }
 
         return responseList
-
     }
 
 
