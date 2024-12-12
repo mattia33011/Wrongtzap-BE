@@ -1,12 +1,10 @@
 package it.mag.wrongtzap.controller
 
-import com.fasterxml.jackson.annotation.JsonView
-import it.mag.wrongtzap.config.ViewsConfig
 import it.mag.wrongtzap.manager.UserManager
-import it.mag.wrongtzap.controller.web.request.LoginRequest
-import it.mag.wrongtzap.controller.web.request.RegisterRequest
+import it.mag.wrongtzap.controller.web.request.user.LoginRequest
+import it.mag.wrongtzap.controller.web.request.user.RegisterRequest
 import it.mag.wrongtzap.jwt.Token
-import it.mag.wrongtzap.manager.SessionManager
+import it.mag.wrongtzap.manager.AuthManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/auth")
 class AuthController @Autowired constructor(
     val userManager: UserManager,
-    val sessionManager: SessionManager
+    val sessionManager: AuthManager
 ) {
 
     @PostMapping("/register")

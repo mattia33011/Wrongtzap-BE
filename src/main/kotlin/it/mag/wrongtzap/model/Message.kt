@@ -1,12 +1,11 @@
 package it.mag.wrongtzap.model
 
 import com.fasterxml.jackson.annotation.JsonBackReference
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
+import it.mag.wrongtzap.model.base.Chat
 import it.mag.wrongtzap.util.TimeGenUtil
 import jakarta.persistence.*
-import java.time.LocalDateTime
 
 
 @Entity
@@ -32,7 +31,6 @@ data class Message(
 
     @ManyToOne
     @JoinColumn(name = "chat_id", nullable = false)
-    @JsonView(ViewsConfig.Public::class)
     @JsonBackReference("Message-Chat")
     val associatedChat: Chat,
 
@@ -57,6 +55,5 @@ data class Message(
     fun deleteForEveryone(){
         deletedForEveryone = true
     }
-
 }
 

@@ -2,7 +2,7 @@ package it.mag.wrongtzap.manager
 
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.jwt.Token
-import it.mag.wrongtzap.controller.web.response.ProfileResponse
+import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class SessionManager @Autowired constructor(
+class AuthManager @Autowired constructor(
     private val jwtUtil: JwtUtil,
     private val userService: UserService,
 )
 {
-    fun fetchProfile(token: Token): ProfileResponse{
+    fun fetchProfile(token: Token): ProfileResponse {
         val email = jwtUtil.extractSubject(token.jwt)
 
         val user = userService.retrieveByEmail(email)

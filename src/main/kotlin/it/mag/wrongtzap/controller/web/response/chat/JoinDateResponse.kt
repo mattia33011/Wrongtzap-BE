@@ -1,4 +1,4 @@
-package it.mag.wrongtzap.controller.web.response
+package it.mag.wrongtzap.controller.web.response.chat
 
 data class JoinDateResponse (
     val userId: String,

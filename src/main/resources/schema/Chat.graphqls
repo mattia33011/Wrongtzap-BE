@@ -1,15 +1,29 @@
 extend type Query{
-    Chat (chatId: String!): Chat!
-    everyChat: [Chat!]
+    Chat (chatId: String!): DirectChat!
+    everyChat: [DirectChat!]
+    Group(groupId: String!): GroupChat!
+    everyGroup: [GroupChat!]
 }
 
-type Chat{
+
+
+type DirectChat{
+    chatId: String!
+    creationDate: Int!
+    participants: [UserProfile!]!
+    messages: [MessageResponse!]
+    archived: Boolean!
+}
+
+type GroupChat{
     chatId: String!
     name: String!
+    creationDate: Int!
     participants : [UserProfile!]!
     participantsDate: [JoinDateResponse!]!
+    admins: [UserProfile!]!
     messages: [MessageResponse!]
-    isGroup: Boolean!
+    archived: Boolean!
 }
 
 type ChatResponse{

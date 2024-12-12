@@ -6,13 +6,9 @@ type Query{
 type User {
     userId: String!
     username: String!
-    chats: [Chat!]
+    directChats: [DirectChat!]
+    groupChats: [GroupChat!]
     friends: [UserProfile!]
-}
-
-type Profile{
-    username: String!
-    userId: String!
 }
 
 type UserProfile{

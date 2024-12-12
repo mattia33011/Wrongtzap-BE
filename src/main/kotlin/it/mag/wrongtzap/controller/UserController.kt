@@ -1,13 +1,10 @@
 package it.mag.wrongtzap.controller
 
-import com.fasterxml.jackson.annotation.JsonView
-import it.mag.wrongtzap.config.ViewsConfig
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.manager.UserManager
-import it.mag.wrongtzap.controller.web.request.ChatRequest
-import it.mag.wrongtzap.controller.web.request.FriendRequest
-import it.mag.wrongtzap.controller.web.request.NewPasswordRequest
-import it.mag.wrongtzap.controller.web.request.UserFetchRequest
+import it.mag.wrongtzap.controller.web.request.user.FriendRequest
+import it.mag.wrongtzap.controller.web.request.user.NewPasswordRequest
+import it.mag.wrongtzap.controller.web.request.user.ProfileFetchRequest
 import it.mag.wrongtzap.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -15,11 +12,9 @@ import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 
@@ -32,7 +27,7 @@ class UserController @Autowired constructor(
 ) {
 
     @PostMapping("/user/search")
-    fun searchUser(@RequestBody request: UserFetchRequest) = userService.retrieveById(request.userId)
+    fun searchUser(@RequestBody request: ProfileFetchRequest) = userService.retrieveById(request.userId)
 
     @PatchMapping("/user/username")
     fun patchUserName(

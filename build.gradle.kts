@@ -43,6 +43,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.2")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("io.arrow-kt:arrow-core:1.2.0")
 
 	// Spring Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test:3.3.2")

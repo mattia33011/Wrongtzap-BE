@@ -3,9 +3,7 @@ package it.mag.wrongtzap.unit
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
-import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
-import it.mag.wrongtzap.model.Chat
+import it.mag.wrongtzap.model.DirectChat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.repository.UserRepository
@@ -40,8 +38,8 @@ class UserServiceUnit {
     )
     fun should_retrieve_chat_or_throw_exception(someChatId: String, exists: Boolean) {
 
-        val mockChat1= mockk<Chat>()
-        val mockChat2= mockk<Chat>()
+        val mockChat1= mockk<DirectChat>()
+        val mockChat2= mockk<DirectChat>()
         val mockUser = mockk<User>()
 
         every { userRepository.findById(any()) } returns Optional.of(mockUser)
@@ -85,8 +83,8 @@ class UserServiceUnit {
         val mockMessage2 = mockk<Message>()
         val mockMessage3 = mockk<Message>()
 
-        val mockChat1 = mockk<Chat>()
-        val mockChat2 = mockk<Chat>()
+        val mockChat1 = mockk<DirectChat>()
+        val mockChat2 = mockk<DirectChat>()
 
         val mockMessageList1 = mutableListOf(mockMessage1, mockMessage2)
         val mockMessageList2 = mutableListOf(mockMessage3)

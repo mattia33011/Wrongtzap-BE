@@ -1,10 +1,12 @@
 package it.mag.wrongtzap.service
 
+import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
-import it.mag.wrongtzap.controller.web.request.FriendRequest
-import it.mag.wrongtzap.controller.web.response.UserResponse
-import it.mag.wrongtzap.model.Chat
+import it.mag.wrongtzap.controller.web.request.user.FriendRequest
+import it.mag.wrongtzap.controller.web.response.user.UserResponse
+import it.mag.wrongtzap.model.DirectChat
+import it.mag.wrongtzap.model.GroupChat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.repository.UserRepository
@@ -17,7 +19,7 @@ import kotlin.jvm.optionals.getOrNull
 class UserService(
     @Autowired
     private val userRepository: UserRepository,
-    private val mapper: Mapper
+    private val mapper: MapperService
 ) {
     //Create method
     fun saveUser(user: User) = userRepository.save(user)
@@ -36,14 +38,26 @@ class UserService(
     fun retrieveByEmail(userMail: String) = userRepository.findByEmail(userMail.lowercase())
     fun retrieveByPasswordAndEmail(userPassword: String, userMail: String) = userRepository.findByPasswordAndEmail(userPassword, userMail)
 
-    fun retrieveChat(userId: String, chatId: String): Chat{
+    fun retrieveChat(userId: String, chatId: String): DirectChat{
 
         val user = userRepository.findById(userId).orElseThrow {
             UserNotFoundException("User not found")
         }
 
-        val chat = user.chats.firstOrNull { it.chatId==chatId }
-            ?: throw it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException("Chat not found")
+        val chat = user.directChats.firstOrNull { it.chatId==chatId }
+            ?: throw ChatNotFoundException("Chat not found")
+
+        return chat
+    }
+
+    fun retrieveGroup(userId: String, chatId: String): GroupChat{
+
+        val user = userRepository.findById(userId).orElseThrow {
+            UserNotFoundException("User not found")
+        }
+
+        val chat = user.groupChats.firstOrNull { it.chatId==chatId }
+            ?: throw ChatNotFoundException("Chat not found")
 
         return chat
     }
@@ -55,7 +69,12 @@ class UserService(
 
         val messages: MutableList<Message> = mutableListOf()
 
-        user.chats.forEach{ chat ->
+        user.directChats.forEach{ chat ->
+            messages.addAll( chat.messages.filter { it.content.contains(messageBody) })
+        }
+
+
+        user.groupChats.forEach{ chat ->
             messages.addAll( chat.messages.filter { it.content.contains(messageBody) })
         }
 

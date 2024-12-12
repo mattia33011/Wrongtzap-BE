@@ -7,19 +7,21 @@ import com.netflix.graphql.dgs.InputArgument
 import graphql.schema.DataFetchingEnvironment
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInChat
-import it.mag.wrongtzap.model.Chat
-import it.mag.wrongtzap.controller.web.response.JoinDateResponse
-import it.mag.wrongtzap.controller.web.response.MessageResponse
-import it.mag.wrongtzap.controller.web.response.UserProfile
+import it.mag.wrongtzap.model.DirectChat
+import it.mag.wrongtzap.controller.web.response.chat.JoinDateResponse
+import it.mag.wrongtzap.controller.web.response.message.MessageResponse
+import it.mag.wrongtzap.controller.web.response.user.UserProfileResponse
 import it.mag.wrongtzap.jwt.UserDetail
-import it.mag.wrongtzap.service.ChatService
+import it.mag.wrongtzap.model.GroupChat
+import it.mag.wrongtzap.model.Message
+import it.mag.wrongtzap.service.DirectChatService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import java.util.*
 
 @DgsComponent
 class ChatDataFetcher @Autowired constructor(
-    private val chatService: ChatService,
+    private val chatService: DirectChatService,
 ) {
     @DgsQuery(field = "Chat")
     fun getChat(@InputArgument chatId: String) = chatService.retrieveChatById(chatId)
@@ -27,15 +29,30 @@ class ChatDataFetcher @Autowired constructor(
     @DgsQuery(field = "everyChat")
     fun getEveryChat() = chatService.retrieveAllChats()
 
-    @DgsData(parentType = "Chat", field = "participants")
-    fun getUsers(dfe: DataFetchingEnvironment):Set<UserProfile>{
-        val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
+    @DgsData(parentType = "DirectChat", field = "participants")
+    fun getChatUsers(dfe: DataFetchingEnvironment):List<UserProfileResponse>{
+        val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
 
-            val responseList: MutableSet<UserProfile> = mutableSetOf()
+        val responseList: List<UserProfileResponse> =
+            chat.participants.map{ user ->
+                UserProfileResponse(
+                    userId = user.userId,
+                    username = user.username
+                )
+            }.toList()
+
+        return responseList
+    }
+
+    @DgsData(parentType = "GroupChat", field = "participants")
+    fun getGroupUsers(dfe: DataFetchingEnvironment):Set<UserProfileResponse>{
+        val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
+
+            val responseList: MutableSet<UserProfileResponse> = mutableSetOf()
 
             chat.participants.forEach{ user ->
                 responseList.add(
-                    UserProfile(
+                    UserProfileResponse(
                     userId = user.userId,
                     username = user.username
             )
@@ -44,20 +61,41 @@ class ChatDataFetcher @Autowired constructor(
             return responseList
     }
 
-    @DgsData(parentType = "Chat", field = "participantsDate")
+    @DgsData(parentType = "GroupChat", field = "participantsDate")
     fun getJoinDate(dfe: DataFetchingEnvironment): List<JoinDateResponse>{
-        val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
+        val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
         return chat.userJoinDates.map { JoinDateResponse(userId = it.key, it.value) }
     }
 
-    @DgsData(parentType = "Chat", field = "messages")
-    fun getMessages(dfe: DataFetchingEnvironment): List<MessageResponse>{
+    @DgsData(parentType = "DirectChat", field = "messages")
+    fun getChatMessages(dfe: DataFetchingEnvironment): List<MessageResponse>{
+
+        val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
+
+        val responseList = chat.messages.filter {
+            message -> !message.deletedForEveryone
+        }
+            .map { message -> MessageResponse(
+                username = message.sender.username,
+                userId = message.sender.userId,
+                content = message.content,
+                chatId = message.associatedChat.chatId,
+                timestamp = message.timestamp.toFloat()
+            )}
+
+        return responseList
+    }
+
+    @DgsData(parentType = "GroupChat", field = "messages")
+    fun getGroupMessages(dfe: DataFetchingEnvironment): List<MessageResponse>{
 
         val authentication = SecurityContextHolder.getContext().authentication
         val jwt = authentication.principal as UserDetail
         val email = jwt.getId()
 
-        val chat = dfe.getSource<Chat>() ?: throw ChatNotFoundException()
+
+
+        val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
         val user = chat.participants.firstOrNull{ user -> user.email == email}
             ?: throw UserNotFoundInChat()
 

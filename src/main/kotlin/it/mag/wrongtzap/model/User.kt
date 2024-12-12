@@ -1,6 +1,7 @@
 package it.mag.wrongtzap.model
 
 import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
 import it.mag.wrongtzap.util.IdGenUtil
@@ -42,7 +43,10 @@ data class User(
     }
 
     @ManyToMany(mappedBy = "participants", cascade = [CascadeType.ALL])
-    @JsonView(ViewsConfig.Internal::class)
-    @JsonBackReference("User-Chats")
-    var chats: MutableSet<Chat> = mutableSetOf()
+    @JsonManagedReference("User-Chats")
+    var directChats: MutableSet<DirectChat> = mutableSetOf()
+
+    @ManyToMany(mappedBy = "participants", cascade = [CascadeType.ALL])
+    @JsonManagedReference("User-Groups")
+    var groupChats: MutableSet<GroupChat> = mutableSetOf()
 }

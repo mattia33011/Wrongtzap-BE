@@ -6,12 +6,12 @@ import io.mockk.spyk
 import io.mockk.verify
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.manager.UserManager
-import it.mag.wrongtzap.model.Chat
+import it.mag.wrongtzap.model.DirectChat
 import it.mag.wrongtzap.model.User
-import it.mag.wrongtzap.controller.web.request.ChatRequest
-import it.mag.wrongtzap.controller.web.request.LoginRequest
-import it.mag.wrongtzap.controller.web.request.MessageRequest
-import it.mag.wrongtzap.service.ChatService
+import it.mag.wrongtzap.controller.web.request.chat.DirectChatRequest
+import it.mag.wrongtzap.controller.web.request.user.LoginRequest
+import it.mag.wrongtzap.controller.web.request.message.MessageRequest
+import it.mag.wrongtzap.service.DirectChatService
 import it.mag.wrongtzap.service.EmailService
 import it.mag.wrongtzap.service.MessageService
 import it.mag.wrongtzap.service.UserService
@@ -28,7 +28,7 @@ class UserManagerUnit {
 
     val messageService: MessageService = mockk()
     val userService: UserService = mockk()
-    val chatService: ChatService = mockk()
+    val chatService: DirectChatService = mockk()
     val emailService: EmailService = mockk()
     val jwtUtil: JwtUtil = mockk()
     val passwordEncoder: PasswordEncoder = mockk()
@@ -122,7 +122,7 @@ class UserManagerUnit {
         val userId1 = "firstId"
         val userId2 = "secondId"
 
-        val chatRequest = ChatRequest(
+        val chatRequest = DirectChatRequest(
             chatName = chatName,
             chatUsersIds = listOf(userId1,userId2)
         )
@@ -156,7 +156,7 @@ class UserManagerUnit {
     fun should_create_message_or_trow_exception(userId: String, chatId: String, messageBody: String){
 
         val testUser = mockk<User>()
-        val testChat = mockk<Chat>()
+        val testChat = mockk<DirectChat>()
         val testRequest = MessageRequest(userId, messageBody)
 
         every { testUser.userId } returns userId
