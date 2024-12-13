@@ -28,11 +28,11 @@ class UserManager @Autowired constructor(
     ) {
     private val passwordFormat = Regex("^[\\w+_!()?*\\-\\[\\]{}]{8,20}$")
     private val usernameFormat = Regex("\\w{6,20}")
-    private val emailFormat = Regex("^[\\w.]+@[a-zA-Z_]+\\.[a-zA-Z]{2,}$")
+    private val emailFormat = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z_]+\\.[a-zA-Z]{2,}$")
 
 
     //Create method
-    fun createUser(request: RegisterRequest): User {
+    fun createUser(request: RegisterRequest): Token{
 
         //Checks for invalid credentials format
         if(!passwordFormat.matches(request.userPassword))
@@ -52,7 +52,15 @@ class UserManager @Autowired constructor(
             password = passwordEncoder.encode(request.userPassword)
         )
 
-        return userService.saveUser(user)
+
+        userService.saveUser(user)
+
+        val loginRequest = LoginRequest(
+            userPassword = request.userPassword,
+            userMail = request.userMail
+        )
+
+        return login(loginRequest)
     }
 
     fun login(userCredentials: LoginRequest): Token {

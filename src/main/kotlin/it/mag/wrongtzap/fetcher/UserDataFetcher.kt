@@ -3,7 +3,7 @@ package it.mag.wrongtzap.fetcher
 import com.netflix.graphql.dgs.*
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.model.User
-import it.mag.wrongtzap.controller.web.response.user.UserProfileResponse
+import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.model.DirectChat
 import it.mag.wrongtzap.model.GroupChat
 import it.mag.wrongtzap.service.MapperService
@@ -41,10 +41,10 @@ class UserDataFetcher @Autowired constructor(
     }
 
     @DgsData(parentType = "User", field = "friends")
-    fun getFriends(dfe: DgsDataFetchingEnvironment): Set<UserProfileResponse>{
+    fun getFriends(dfe: DgsDataFetchingEnvironment): Set<ProfileResponse>{
         val user = dfe.getSource<User>() ?: throw UserNotFoundException()
 
-        return user.friends.map { friend -> UserProfileResponse(
+        return user.friends.map { friend -> ProfileResponse(
             userId = friend.userId,
             username = friend.username
         ) }.toSet()

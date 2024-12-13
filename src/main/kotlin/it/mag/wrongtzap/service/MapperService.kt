@@ -4,7 +4,7 @@ import it.mag.wrongtzap.controller.web.response.chat.DirectChatResponse
 import it.mag.wrongtzap.controller.web.response.chat.GroupChatResponse
 import it.mag.wrongtzap.controller.web.response.chat.JoinDateResponse
 import it.mag.wrongtzap.controller.web.response.message.MessageResponse
-import it.mag.wrongtzap.controller.web.response.user.UserProfileResponse
+import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.controller.web.response.user.UserResponse
 import it.mag.wrongtzap.model.DirectChat
 import it.mag.wrongtzap.model.GroupChat
@@ -56,8 +56,8 @@ class MapperService {
         return response
     }
 
-    fun userToProfile(user: User): UserProfileResponse {
-        val response = UserProfileResponse(
+    fun userToProfile(user: User): ProfileResponse {
+        val response = ProfileResponse(
             userId =  user.userId,
             username = user.username,
         )

@@ -4,6 +4,7 @@ import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.controller.web.request.user.FriendRequest
+import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.controller.web.response.user.UserResponse
 import it.mag.wrongtzap.model.DirectChat
 import it.mag.wrongtzap.model.GroupChat
@@ -84,7 +85,7 @@ class UserService(
     }
 
     @Transactional
-    fun addFriend(request: FriendRequest): Pair<UserResponse, UserResponse>{
+    fun addFriend(request: FriendRequest): Pair<ProfileResponse, ProfileResponse>{
         val sender = userRepository.findById(request.senderId).orElseThrow { UserNotFoundException() }
         val receiver = userRepository.findById(request.receiverId).orElseThrow { UserNotFoundException() }
 
@@ -92,13 +93,13 @@ class UserService(
         userRepository.save(sender)
 
         return Pair(
-            first = mapper.userToResponse(sender),
-            second = mapper.userToResponse(receiver)
+            first = mapper.userToProfile(sender),
+            second = mapper.userToProfile(receiver)
         )
     }
 
     @Transactional
-    fun removeFriend(request: FriendRequest): Pair<UserResponse, UserResponse>{
+    fun removeFriend(request: FriendRequest): Pair<ProfileResponse, ProfileResponse>{
         val sender = userRepository.findById(request.senderId).orElseThrow { UserNotFoundException() }
         val receiver = userRepository.findById(request.receiverId).orElseThrow { UserNotFoundException() }
 
@@ -106,8 +107,8 @@ class UserService(
         userRepository.save(sender)
 
         return Pair(
-            first = mapper.userToResponse(sender),
-            second = mapper.userToResponse(receiver)
+            first = mapper.userToProfile(sender),
+            second = mapper.userToProfile(receiver)
         )
     }
 

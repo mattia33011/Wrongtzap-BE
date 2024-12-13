@@ -10,10 +10,9 @@ import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundInChat
 import it.mag.wrongtzap.model.DirectChat
 import it.mag.wrongtzap.controller.web.response.chat.JoinDateResponse
 import it.mag.wrongtzap.controller.web.response.message.MessageResponse
-import it.mag.wrongtzap.controller.web.response.user.UserProfileResponse
+import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.jwt.UserDetail
 import it.mag.wrongtzap.model.GroupChat
-import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.service.DirectChatService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,12 +29,12 @@ class ChatDataFetcher @Autowired constructor(
     fun getEveryChat() = chatService.retrieveAllChats()
 
     @DgsData(parentType = "DirectChat", field = "participants")
-    fun getChatUsers(dfe: DataFetchingEnvironment):List<UserProfileResponse>{
+    fun getChatUsers(dfe: DataFetchingEnvironment):List<ProfileResponse>{
         val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
 
-        val responseList: List<UserProfileResponse> =
+        val responseList: List<ProfileResponse> =
             chat.participants.map{ user ->
-                UserProfileResponse(
+                ProfileResponse(
                     userId = user.userId,
                     username = user.username
                 )
@@ -45,14 +44,14 @@ class ChatDataFetcher @Autowired constructor(
     }
 
     @DgsData(parentType = "GroupChat", field = "participants")
-    fun getGroupUsers(dfe: DataFetchingEnvironment):Set<UserProfileResponse>{
+    fun getGroupUsers(dfe: DataFetchingEnvironment):Set<ProfileResponse>{
         val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
 
-            val responseList: MutableSet<UserProfileResponse> = mutableSetOf()
+            val responseList: MutableSet<ProfileResponse> = mutableSetOf()
 
             chat.participants.forEach{ user ->
                 responseList.add(
-                    UserProfileResponse(
+                    ProfileResponse(
                     userId = user.userId,
                     username = user.username
             )
@@ -115,6 +114,23 @@ class ChatDataFetcher @Autowired constructor(
             }
 
         return responseList
+    }
+
+    @DgsData(parentType = "DirectChat", field = "archived")
+    fun getChatArchivedIds(dfe: DataFetchingEnvironment): List<String>{
+        val chat = dfe.getSource<DirectChat>()
+            ?: throw ChatNotFoundException()
+
+        return chat.archived
+    }
+
+
+    @DgsData(parentType = "GroupChat", field = "archived")
+    fun getGroupArchivedIds(dfe: DataFetchingEnvironment): MutableList<String>{
+        val chat = dfe.getSource<GroupChat>()
+            ?: throw ChatNotFoundException()
+
+        return chat.archived
     }
 
 

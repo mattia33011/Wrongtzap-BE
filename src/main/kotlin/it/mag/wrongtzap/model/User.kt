@@ -25,7 +25,7 @@ data class User(
     @JsonView(ViewsConfig.Internal::class)
     var password: String,
 
-    @ManyToMany
+    @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(
         name = "user_friends",
         joinColumns = [JoinColumn(name = "user_id")],

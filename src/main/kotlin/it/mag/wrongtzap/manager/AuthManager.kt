@@ -15,7 +15,7 @@ class AuthManager @Autowired constructor(
     private val userService: UserService,
 )
 {
-    fun fetchProfile(token: Token): ProfileResponse {
+    fun fetchProfile(token: Token): ProfileResponse{
         val email = jwtUtil.extractSubject(token.jwt)
 
         val user = userService.retrieveByEmail(email)

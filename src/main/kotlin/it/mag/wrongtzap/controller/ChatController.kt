@@ -1,6 +1,7 @@
 package it.mag.wrongtzap.controller
 
 import it.mag.wrongtzap.controller.web.request.chat.DirectChatRequest
+import it.mag.wrongtzap.controller.web.request.chat.GroupChatRequest
 import it.mag.wrongtzap.controller.web.request.message.MessageDeletionRequest
 import it.mag.wrongtzap.controller.web.request.message.MessageRequest
 import it.mag.wrongtzap.jwt.JwtUtil
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 
 @Controller
 class ChatController @Autowired constructor(
-    private val directChatService: DirectChatService,
     private val groupChatService: GroupChatService,
     private val chatManager: ChatManager,
     private val template: SimpMessagingTemplate,
@@ -30,17 +30,21 @@ class ChatController @Autowired constructor(
         // ENTITY CREATION
         //
 
-        @MessageMapping("/create")
+        @MessageMapping("/chats/create")
         @SendTo("/topic/chats")
         fun createChat(chatRequest: DirectChatRequest) = chatManager.createChat(ChatRequestType.Direct(chatRequest))
 
-        @MessageMapping("/{chatId}/users/{userId}/add")
-        fun addUserToGroup(@DestinationVariable chatId: String, @DestinationVariable userId: String){
-            val user = chatManager.addUserToGroup(chatId, userId)
+        @MessageMapping("/groups/create")
+        @SendTo("/topic/groups")
+        fun createGroup(chatRequest: GroupChatRequest) = chatManager.createChat(ChatRequestType.Group(chatRequest))
+
+        @MessageMapping("/groups/{groupId}/users/{userId}/add")
+        fun addUserToGroup(@DestinationVariable groupId: String, @DestinationVariable userId: String){
+            val user = chatManager.addUserToGroup(groupId, userId)
             template.convertAndSend("/topic/groups/users", user)
         }
 
-        @MessageMapping("/message/add")
+        @MessageMapping("/messages/add")
         fun postMessage(request: MessageRequest){
         val message = chatManager.createMessage(request, request.type)
             if(request.type == "group")
@@ -53,9 +57,9 @@ class ChatController @Autowired constructor(
         // PROPERTY EDITING
         //
 
-        @MessageMapping("/{chatId}/name")
-        fun editGroupName(@DestinationVariable chatId: String, chatName: String){
-            val chat = groupChatService.editChatName(chatId,chatName)
+        @MessageMapping("/groups/{groupId}/name")
+        fun editGroupName(@DestinationVariable groupId: String, chatName: String){
+            val chat = groupChatService.editChatName(groupId,chatName)
             template.convertAndSend("/topic/groups", chat)
         }
 
@@ -75,10 +79,10 @@ class ChatController @Autowired constructor(
         //
 
         //WIP
-        @MessageMapping("/{chatId}/users/leave")
-        fun leaveGroup(@DestinationVariable chatId: String, @RequestHeader("Authorization") token: String) {
-            groupChatService.leaveGroup(chatId,jwtUtil.tokenToSubject(token))
-            template.convertAndSend("topic/groups/$chatId/users")
+        @MessageMapping("/groups/{groupId}/users/leave")
+        fun leaveGroup(@DestinationVariable groupId: String, @RequestHeader("Authorization") token: String) {
+            groupChatService.leaveGroup(groupId,jwtUtil.tokenToSubject(token))
+            template.convertAndSend("topic/groups/$groupId/users")
         }
 
         //WIP

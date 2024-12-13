@@ -8,5 +8,5 @@ data class UserResponse(
     val username: String,
     val directChats: MutableSet<DirectChatResponse>,
     val groupChats: MutableSet<GroupChatResponse>,
-    val friends: MutableSet<UserProfileResponse>
+    val friends: MutableSet<ProfileResponse>
 ) {}

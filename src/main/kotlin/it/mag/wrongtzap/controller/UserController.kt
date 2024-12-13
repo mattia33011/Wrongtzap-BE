@@ -50,16 +50,15 @@ class UserController @Autowired constructor(
     @MessageMapping("/user/friend/add")
     fun addFriend(request: FriendRequest){
         val response = userService.addFriend(request)
-        template.convertAndSend("/topic/users/${response.first.userId}", response.first)
-        template.convertAndSend("/topic/users/${response.second.userId}", response.second)
+        template.convertAndSend("/topic/users/${response.first.userId}/friends", response.second)
+        template.convertAndSend("/topic/users/${response.second.userId}/friends", response.first)
     }
 
     @MessageMapping("/user/friend/remove")
-    @SendTo("/topic/users")
     fun removeFriend(request: FriendRequest){
         val response= userService.removeFriend(request)
 
-        template.convertAndSend("/topic/users/${response.first.userId}", response.first)
-        template.convertAndSend("/topic/users/${response.second.userId}", response.second)
+        template.convertAndSend("/topic/users/${response.first.userId}/friends", response.second)
+        template.convertAndSend("/topic/users/${response.second.userId}/friends", response.first)
     }
 }
