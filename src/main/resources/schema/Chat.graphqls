@@ -9,7 +9,7 @@ extend type Query{
 
 type DirectChat{
     chatId: String!
-    creationDate: Int!
+    creationDate: Float!
     participants: [UserProfile!]!
     messages: [MessageResponse!]
     archived: [String!]
@@ -18,7 +18,7 @@ type DirectChat{
 type GroupChat{
     chatId: String!
     name: String!
-    creationDate: Int!
+    creationDate: Float!
     participants : [UserProfile!]!
     participantsDate: [JoinDateResponse!]!
     admins: [UserProfile!]!
@@ -33,7 +33,7 @@ type ChatResponse{
 
 type JoinDateResponse{
     userId: String!
-    timestamp: Int!
+    timestamp: Float!
 }
 
 

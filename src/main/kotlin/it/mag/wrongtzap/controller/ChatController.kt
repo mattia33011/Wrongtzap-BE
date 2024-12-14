@@ -7,6 +7,7 @@ import it.mag.wrongtzap.controller.web.request.message.MessageRequest
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.manager.ChatManager
 import it.mag.wrongtzap.model.type.ChatRequestType
+import it.mag.wrongtzap.model.type.ChatResponseType
 import it.mag.wrongtzap.service.DirectChatService
 import it.mag.wrongtzap.service.GroupChatService
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,6 +39,7 @@ class ChatController @Autowired constructor(
         @SendTo("/topic/groups")
         fun createGroup(chatRequest: GroupChatRequest) = chatManager.createChat(ChatRequestType.Group(chatRequest))
 
+
         @MessageMapping("/groups/{groupId}/users/{userId}/add")
         fun addUserToGroup(@DestinationVariable groupId: String, @DestinationVariable userId: String){
             val user = chatManager.addUserToGroup(groupId, userId)
@@ -48,9 +50,9 @@ class ChatController @Autowired constructor(
         fun postMessage(request: MessageRequest){
         val message = chatManager.createMessage(request, request.type)
             if(request.type == "group")
-                template.convertAndSend("/topic/chats/messages", message)
-            else
                 template.convertAndSend("/topic/groups/messages", message)
+            else
+                template.convertAndSend("/topic/chats/messages", message)
     }
 
         //

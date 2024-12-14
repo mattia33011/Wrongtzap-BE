@@ -16,7 +16,6 @@ import it.mag.wrongtzap.model.GroupChat
 import it.mag.wrongtzap.model.Message
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.model.type.ChatRequestType
-import it.mag.wrongtzap.model.type.ChatResponseType
 import it.mag.wrongtzap.service.*
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,10 +38,10 @@ class ChatManager @Autowired constructor(
             directChatService.retrieveChatById(chatId)
     }
 
-    fun createChat(request: ChatRequestType): ChatResponseType{
+    fun createChat(request: ChatRequestType): Any {
         return when(request){
-            is ChatRequestType.Direct-> ChatResponseType.Direct(createDirectChat(request.direct))
-            is ChatRequestType.Group -> ChatResponseType.Group(createGroupChat(request.group))
+            is ChatRequestType.Direct-> createDirectChat(request.direct)
+            is ChatRequestType.Group -> createGroupChat(request.group)
         }
     }
 
@@ -61,20 +60,20 @@ class ChatManager @Autowired constructor(
 
     @Transactional
     fun createGroupChat(request: GroupChatRequest): GroupChatResponse {
-        if(!chatNameFormat.matches(request.chatName))
+        if(!chatNameFormat.matches(request.name))
             throw InvalidChatnameFormatException()
 
-        if(request.chatUsersIds.size <= 2)
+        if(request.userIds.size <= 2)
             throw InvalidNumberOfParticipantsException()
 
         val admin = mutableSetOf<User>()
-        admin.add(userService.retrieveById(request.firstUserId))
+        admin.add(userService.retrieveById(request.adminId))
 
-        val participants = request.chatUsersIds.map { id -> userService.retrieveById(id) }.toMutableSet()
+        val participants = request.userIds.map { id -> userService.retrieveById(id) }.toMutableSet()
         val joinDates = participants.map { user -> user.userId  }.associateWith { System.currentTimeMillis() }.toMutableMap()
 
         val chat = GroupChat(
-            name = request.chatName,
+            name = request.name,
             participants = participants,
             userJoinDates = joinDates,
             admins = admin
@@ -116,7 +115,7 @@ class ChatManager @Autowired constructor(
             sender = sender,
             content = request.body,
             associatedChat = chat,
-            timestamp = request.timestamp
+            timestamp = System.currentTimeMillis()
         )
 
         messageService.saveMessage(message)

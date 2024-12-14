@@ -6,10 +6,7 @@ import it.mag.wrongtzap.controller.web.response.chat.JoinDateResponse
 import it.mag.wrongtzap.controller.web.response.message.MessageResponse
 import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.controller.web.response.user.UserResponse
-import it.mag.wrongtzap.model.DirectChat
-import it.mag.wrongtzap.model.GroupChat
-import it.mag.wrongtzap.model.Message
-import it.mag.wrongtzap.model.User
+import it.mag.wrongtzap.model.*
 import org.springframework.stereotype.Service
 
 @Service
@@ -51,7 +48,7 @@ class MapperService {
             username = user.username,
             directChats = user.directChats.map { chat -> directChatToResponse(chat) }.toMutableSet(),
             groupChats = user.groupChats.map { chat -> groupChatToResponse(chat) }.toMutableSet(),
-            friends = user.friends.map { friend -> userToProfile(friend) }.toMutableSet()
+            friends = user.friends
         )
         return response
     }

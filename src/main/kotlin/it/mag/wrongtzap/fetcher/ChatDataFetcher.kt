@@ -30,7 +30,7 @@ class ChatDataFetcher @Autowired constructor(
 
     @DgsData(parentType = "DirectChat", field = "participants")
     fun getChatUsers(dfe: DataFetchingEnvironment):List<ProfileResponse>{
-        val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
+        val chat = dfe.getSource<DirectChat>() ?: throw ChatNotFoundException()
 
         val responseList: List<ProfileResponse> =
             chat.participants.map{ user ->
@@ -69,7 +69,7 @@ class ChatDataFetcher @Autowired constructor(
     @DgsData(parentType = "DirectChat", field = "messages")
     fun getChatMessages(dfe: DataFetchingEnvironment): List<MessageResponse>{
 
-        val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
+        val chat = dfe.getSource<DirectChat>() ?: throw ChatNotFoundException()
 
         val responseList = chat.messages.filter {
             message -> !message.deletedForEveryone

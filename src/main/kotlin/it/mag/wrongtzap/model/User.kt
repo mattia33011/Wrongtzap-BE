@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
+import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.util.IdGenUtil
 import jakarta.persistence.*
 
@@ -25,16 +26,12 @@ data class User(
     @JsonView(ViewsConfig.Internal::class)
     var password: String,
 
-    @ManyToMany(cascade = [CascadeType.ALL])
-    @JoinTable(
-        name = "user_friends",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "friend_id")]
-    )
-    val friends: MutableSet<User> = mutableSetOf()
+    @ElementCollection(fetch = FetchType.EAGER)
+    val friends: MutableSet<ProfileResponse> = mutableSetOf()
+
+
 ){
 
-    @Id
     @PrePersist
     fun userInit() {
         if (userId.isEmpty()) {
@@ -49,4 +46,5 @@ data class User(
     @ManyToMany(mappedBy = "participants", cascade = [CascadeType.ALL])
     @JsonManagedReference("User-Groups")
     var groupChats: MutableSet<GroupChat> = mutableSetOf()
+
 }

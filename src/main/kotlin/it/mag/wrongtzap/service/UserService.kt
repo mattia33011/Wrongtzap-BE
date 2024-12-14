@@ -5,11 +5,7 @@ import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundExceptio
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
 import it.mag.wrongtzap.controller.web.request.user.FriendRequest
 import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
-import it.mag.wrongtzap.controller.web.response.user.UserResponse
-import it.mag.wrongtzap.model.DirectChat
-import it.mag.wrongtzap.model.GroupChat
-import it.mag.wrongtzap.model.Message
-import it.mag.wrongtzap.model.User
+import it.mag.wrongtzap.model.*
 import it.mag.wrongtzap.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -86,16 +82,29 @@ class UserService(
 
     @Transactional
     fun addFriend(request: FriendRequest): Pair<ProfileResponse, ProfileResponse>{
-        val sender = userRepository.findById(request.senderId).orElseThrow { UserNotFoundException() }
-        val receiver = userRepository.findById(request.receiverId).orElseThrow { UserNotFoundException() }
 
-        sender.friends.add(receiver)
-        userRepository.save(sender)
+            val user = userRepository.findById(request.senderId)
+                .orElseThrow { UserNotFoundException("User not found") }
+            val receiver = userRepository.findById(request.receiverId)
+                .orElseThrow { UserNotFoundException("Friend not found") }
 
-        return Pair(
-            first = mapper.userToProfile(sender),
-            second = mapper.userToProfile(receiver)
-        )
+        user.friends.add(ProfileResponse(
+                userId = receiver.userId,
+                username = receiver.username
+        ))
+        receiver.friends.add(ProfileResponse(
+            userId = user.userId,
+            username = user.username
+        ))
+
+        // Save both users
+        userRepository.save(user)
+        userRepository.save(receiver)
+
+            return Pair(
+                first = mapper.userToProfile(user),
+                second = mapper.userToProfile(receiver)
+            )
     }
 
     @Transactional
@@ -103,8 +112,18 @@ class UserService(
         val sender = userRepository.findById(request.senderId).orElseThrow { UserNotFoundException() }
         val receiver = userRepository.findById(request.receiverId).orElseThrow { UserNotFoundException() }
 
-        sender.friends.remove(receiver)
+
+        val friendship = sender.friends.find { friend -> friend.userId == receiver.userId }
+            ?: throw UserNotFoundException()
+
+        val reverseFriendship = receiver.friends.find { friend -> friend.userId == sender.userId }
+            ?: throw UserNotFoundException()
+
+        sender.friends.remove(friendship)
+        receiver.friends.remove(reverseFriendship)
+
         userRepository.save(sender)
+        userRepository.save(receiver)
 
         return Pair(
             first = mapper.userToProfile(sender),

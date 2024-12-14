@@ -14,7 +14,7 @@ data class DirectChat(
         inverseJoinColumns = [JoinColumn(name = "user_id")]
     )
     @Size(min = 2, max = 2)
-    var participants: List<User> = listOf(),
+    var participants: List<User>,
 
     @ElementCollection
     @Size(min = 0, max = 2)

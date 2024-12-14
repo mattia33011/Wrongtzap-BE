@@ -44,9 +44,6 @@ class UserDataFetcher @Autowired constructor(
     fun getFriends(dfe: DgsDataFetchingEnvironment): Set<ProfileResponse>{
         val user = dfe.getSource<User>() ?: throw UserNotFoundException()
 
-        return user.friends.map { friend -> ProfileResponse(
-            userId = friend.userId,
-            username = friend.username
-        ) }.toSet()
+        return user.friends.toSet()
     }
 }
