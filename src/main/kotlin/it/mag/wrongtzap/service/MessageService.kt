@@ -18,13 +18,13 @@ class MessageService @Autowired constructor(
 
     //Retrieve method
     fun retrieveByKeyword(keyword: String) = messageRepository.findByContent(keyword)
-    fun retrieveById(messageId: String) = messageRepository.findById(messageId)
+    fun retrieveById(messageId: Long) = messageRepository.findById(messageId)
     fun retrieveAll() = messageRepository.findAll()
 
 
     //Update method
     @Transactional
-    fun editMessage(messageId: String, newBody: String): Message{
+    fun editMessage(messageId: Long, newBody: String): Message{
         val message = messageRepository.findById(messageId)
             .orElseThrow{ it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException() }
 
@@ -39,7 +39,7 @@ class MessageService @Autowired constructor(
 
     //Delete method
     @Transactional
-    fun deleteMessage(messageId: String): Message {
+    fun deleteMessage(messageId: Long): Message {
         val message = messageRepository.findById(messageId)
             .orElseThrow{ it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException() }
 

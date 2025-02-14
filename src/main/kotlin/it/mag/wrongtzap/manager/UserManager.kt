@@ -1,26 +1,32 @@
 package it.mag.wrongtzap.manager
 
+import cn.hutool.core.lang.Snowflake
 import it.mag.wrongtzap.controller.web.exception.user.*
 import it.mag.wrongtzap.controller.web.request.user.LoginRequest
 import it.mag.wrongtzap.controller.web.request.user.NewPasswordRequest
 import it.mag.wrongtzap.controller.web.request.user.RegisterRequest
+import it.mag.wrongtzap.controller.web.request.user.UserDeleteRequest
 import it.mag.wrongtzap.jwt.Token
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.service.*
 import it.mag.wrongtzap.util.EmailCoroutineScope
+import it.mag.wrongtzap.util.IdGenUtil
+import jakarta.transaction.Transactional
 import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class UserManager @Autowired constructor(
     private val userService: UserService,
     private val conversionService: MapperService,
     private val emailService: EmailService,
+    private val snowflake: Snowflake,
 
     private val passwordEncoder: PasswordEncoder,
     private val jwtUtil: JwtUtil,
@@ -49,7 +55,8 @@ class UserManager @Autowired constructor(
         val user = User(
             username = request.userName,
             email = request.userMail.lowercase(),
-            password = passwordEncoder.encode(request.userPassword)
+            password = passwordEncoder.encode(request.userPassword),
+            userId = snowflake.nextId()
         )
 
 
@@ -82,8 +89,8 @@ class UserManager @Autowired constructor(
         }
     }
 
-    fun changePassword(userId: String, newPasswordRequest: NewPasswordRequest): ResponseEntity<Any>{
-        val user = userService.retrieveById(userId)
+    fun changePassword(newPasswordRequest: NewPasswordRequest): ResponseEntity<Any>{
+        val user = userService.retrieveById(newPasswordRequest.userId)
 
         val auth = passwordMatch(newPasswordRequest.oldPassword, user.password)
 
@@ -95,6 +102,17 @@ class UserManager @Autowired constructor(
             }
         }
         else throw UserNotFoundInAuthentication("")
+    }
+
+    @Transactional
+    fun deleteUser(request: UserDeleteRequest){
+        val user = userService.retrieveById(request.userId)
+
+        val auth = passwordMatch(request.password, user.password)
+
+        if(auth){
+            userService.deleteUser(request.userId, request.userMail)
+        }
     }
 
     private fun passwordMatch(rawPassword: String, hashPassword: String): Boolean{

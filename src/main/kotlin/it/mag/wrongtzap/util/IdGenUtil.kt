@@ -9,7 +9,7 @@ object IdGenUtil {
         val timestamp = Instant.now().toEpochMilli()
         val input = "$name$timestamp"
         val alphanumeric = input.toAlphanumericHash()
-        return "$name-$alphanumeric"
+        return "$name#$alphanumeric"
     }
 
     fun generateChatId(chatName: String): String {
@@ -17,7 +17,7 @@ object IdGenUtil {
         val timestamp = Instant.now().toEpochMilli()
         val input = "$firstWord$timestamp"
         val alphanumeric = input.toAlphanumericHash()
-        return "$firstWord-$alphanumeric"
+        return "$firstWord#$alphanumeric"
     }
 
     private fun String.toAlphanumericHash(): String {

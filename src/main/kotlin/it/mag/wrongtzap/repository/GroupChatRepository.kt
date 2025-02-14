@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GroupChatRepository: JpaRepository<GroupChat, String> {
+interface GroupChatRepository: JpaRepository<GroupChat, Long> {
 }

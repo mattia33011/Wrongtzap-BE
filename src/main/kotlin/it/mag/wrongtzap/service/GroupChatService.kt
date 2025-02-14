@@ -1,6 +1,6 @@
 package it.mag.wrongtzap.service
 
-import it.mag.wrongtzap.model.DirectChat
+import it.mag.wrongtzap.controller.web.response.chat.ParticipantRequest
 import it.mag.wrongtzap.model.GroupChat
 import it.mag.wrongtzap.repository.GroupChatRepository
 
@@ -24,14 +24,14 @@ class GroupChatService @Autowired constructor(
     //Retrieve Methods
     //
 
-    fun retrieveChatById(chatId: String): GroupChat = groupChatRepository.findById(chatId)
+    fun retrieveChatById(chatId: Long): GroupChat = groupChatRepository.findById(chatId)
         .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
     fun retrieveAllChats() = groupChatRepository.findAll()
 
 
     @Transactional
-    fun editChatName(chatId: String, newName: String){
+    fun editChatName(chatId: Long, newName: String){
         val chat = groupChatRepository.findById(chatId)
             .orElseThrow{ it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
@@ -43,22 +43,22 @@ class GroupChatService @Autowired constructor(
     }
 
     @Transactional
-    fun leaveGroup(chatId: String, userId: String): GroupChat {
-        val chat = groupChatRepository.findById(chatId)
+    fun leaveGroup(request: ParticipantRequest): GroupChat {
+        val chat = groupChatRepository.findById(request.chatId)
             .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
-        chat.participants.removeIf { it.userId==userId }
-        chat.userJoinDates.remove(userId)
+        chat.participants.removeIf { it.userId==request.userId }
+        chat.userJoinDates.remove(request.userId)
         return groupChatRepository.save(chat)
     }
 
     @Transactional
-    fun removeUser(chatId: String, userId: String): GroupChat {
-        val chat = groupChatRepository.findById(chatId)
+    fun removeUser(request: ParticipantRequest): GroupChat {
+        val chat = groupChatRepository.findById(request.chatId)
             .orElseThrow{ it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
-        chat.participants.removeIf{ it.userId== userId}
-        chat.userJoinDates.remove(userId)
+        chat.participants.removeIf{ it.userId== request.userId}
+        chat.userJoinDates.remove(request.userId)
         return groupChatRepository.save(chat)
     }
 
@@ -79,6 +79,6 @@ class GroupChatService @Autowired constructor(
     //
 
     @Transactional
-    fun deleteChat(chatId: String) = groupChatRepository.deleteById(chatId)
+    fun deleteChat(chatId: Long) = groupChatRepository.deleteById(chatId)
 
 }

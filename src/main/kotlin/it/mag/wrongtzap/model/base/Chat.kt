@@ -3,6 +3,7 @@ package it.mag.wrongtzap.model.base
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import it.mag.wrongtzap.model.Message
 import jakarta.persistence.*
+import org.hibernate.annotations.GenericGenerator
 
 
 @Entity
@@ -10,7 +11,7 @@ import jakarta.persistence.*
 open class Chat(
     @Id
     @Column(updatable = false, nullable = false)
-    open val chatId: String,
+    open var chatId: Long = 0,
 
     @Column(updatable = false)
     open val creationDate: Long,

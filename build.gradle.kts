@@ -2,7 +2,7 @@ plugins {
 	id("org.springframework.boot") version "3.3.1"
 	id("io.spring.dependency-management") version "1.1.5"
 	kotlin("plugin.jpa") version "1.9.24"
-	kotlin("jvm") version "1.9.24"
+	kotlin("jvm") version "2.1.0"
 	kotlin("plugin.spring") version "1.9.24"
 }
 
@@ -38,6 +38,7 @@ dependencies {
 	implementation ("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+	implementation ("cn.hutool:hutool-core:5.8.20")
 
 	//Kotlin Starter
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -57,8 +58,10 @@ dependencies {
 	testImplementation("org.testcontainers:mysql:1.20.0")
 	testImplementation ("org.springframework.boot:spring-boot-testcontainers")
 
-	//MySQL
-	runtimeOnly("com.mysql:mysql-connector-j")
+	//Databases
+	//runtimeOnly("com.mysql:mysql-connector-j")
+	runtimeOnly("mysql:mysql-connector-java:8.0.33")
+	implementation("io.minio:minio:8.5.14")
 
 	// DGS Framework for GraphQL
 	implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")

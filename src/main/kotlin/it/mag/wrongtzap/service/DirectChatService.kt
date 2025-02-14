@@ -13,7 +13,7 @@ class DirectChatService @Autowired constructor(
 
     fun saveChat(chat: DirectChat) = chatRepository.save(chat)
 
-    fun retrieveChatById(chatId: String): DirectChat = chatRepository.findById(chatId)
+    fun retrieveChatById(chatId: Long): DirectChat = chatRepository.findById(chatId)
         .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
     fun retrieveAllChats() = chatRepository.findAll()

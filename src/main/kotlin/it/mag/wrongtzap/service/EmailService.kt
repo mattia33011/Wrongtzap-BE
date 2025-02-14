@@ -11,7 +11,7 @@ class EmailService @Autowired constructor(
     val emailSender: JavaMailSender,
 ) {
 
-    fun sendLoginNotification(receiverMail: String, receiverId: String){
+    fun sendLoginNotification(receiverMail: String, receiverId: Long){
 
         val message = emailSender.createMimeMessage()
         val messageHelper = MimeMessageHelper(message, true, "UTF-8")
@@ -19,7 +19,7 @@ class EmailService @Autowired constructor(
         messageHelper.setTo(receiverMail)
         messageHelper.setSubject("Login Activity Detected")
         messageHelper.setText(
-            MailFormUtil.loginForm.replace("USERNAME", receiverId), true
+            MailFormUtil.loginForm.replace("USERNAME", "$receiverId"), true
         )
         messageHelper.setFrom("wrongtzapp@gmail.com")
 

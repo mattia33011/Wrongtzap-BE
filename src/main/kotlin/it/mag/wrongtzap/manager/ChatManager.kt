@@ -1,5 +1,6 @@
 package it.mag.wrongtzap.manager
 
+import cn.hutool.core.lang.Snowflake
 import it.mag.wrongtzap.controller.web.exception.chat.InvalidChatnameFormatException
 import it.mag.wrongtzap.controller.web.exception.chat.InvalidNumberOfParticipantsException
 import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
@@ -9,6 +10,7 @@ import it.mag.wrongtzap.controller.web.request.message.MessageDeletionRequest
 import it.mag.wrongtzap.controller.web.request.message.MessageRequest
 import it.mag.wrongtzap.controller.web.response.chat.DirectChatResponse
 import it.mag.wrongtzap.controller.web.response.chat.GroupChatResponse
+import it.mag.wrongtzap.controller.web.response.chat.ParticipantRequest
 import it.mag.wrongtzap.controller.web.response.message.MessageResponse
 import it.mag.wrongtzap.controller.web.response.user.UserResponse
 import it.mag.wrongtzap.model.DirectChat
@@ -26,12 +28,13 @@ class ChatManager @Autowired constructor(
     private val directChatService: DirectChatService,
     private val groupChatService: GroupChatService,
     private val userService: UserService,
+    private val snowflake: Snowflake,
     private val messageService: MessageService,
     private val mapperService: MapperService
 ) {
     private val chatNameFormat = Regex("^[\\w\\s]{1,100}\$")
 
-    fun findChat(chatId: String, type: String): Any{
+    fun findChat(chatId: Long, type: String): Any{
         return if (type == "group"){
             groupChatService.retrieveChatById(chatId)
         } else
@@ -53,6 +56,8 @@ class ChatManager @Autowired constructor(
         val chat = DirectChat(
             participants = listOf(firstUser,secondUser)
         )
+
+        chat.chatId = snowflake.nextId()
 
         directChatService.saveChat(chat)
         return mapperService.directChatToResponse(chat)
@@ -79,19 +84,21 @@ class ChatManager @Autowired constructor(
             admins = admin
         )
 
+        chat.chatId = snowflake.nextId()
+
         groupChatService.saveChat(chat)
         return mapperService.groupChatToResponse(chat)
     }
 
     @Transactional
-    fun addUserToGroup(chatId: String, userId: String): UserResponse {
+    fun addUserToGroup(request: ParticipantRequest): UserResponse {
 
-        val chat = groupChatService.retrieveChatById(chatId)
+        val chat = groupChatService.retrieveChatById(request.chatId)
 
-        val user = userService.retrieveById(userId)
+        val user = userService.retrieveById(request.userId)
 
         chat.apply {
-            userJoinDates[userId] = System.currentTimeMillis()
+            userJoinDates[request.userId] = System.currentTimeMillis()
             participants.add(user)
         }
 
@@ -113,6 +120,7 @@ class ChatManager @Autowired constructor(
 
         val message = Message(
             sender = sender,
+            messageId = snowflake.nextId(),
             content = request.body,
             associatedChat = chat,
             timestamp = System.currentTimeMillis()

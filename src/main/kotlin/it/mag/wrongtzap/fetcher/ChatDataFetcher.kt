@@ -23,7 +23,7 @@ class ChatDataFetcher @Autowired constructor(
     private val chatService: DirectChatService,
 ) {
     @DgsQuery(field = "Chat")
-    fun getChat(@InputArgument chatId: String) = chatService.retrieveChatById(chatId)
+    fun getChat(@InputArgument chatId: Long) = chatService.retrieveChatById(chatId)
 
     @DgsQuery(field = "everyChat")
     fun getEveryChat() = chatService.retrieveAllChats()
@@ -63,7 +63,7 @@ class ChatDataFetcher @Autowired constructor(
     @DgsData(parentType = "GroupChat", field = "participantsDate")
     fun getJoinDate(dfe: DataFetchingEnvironment): List<JoinDateResponse>{
         val chat = dfe.getSource<GroupChat>() ?: throw ChatNotFoundException()
-        return chat.userJoinDates.map { JoinDateResponse(userId = it.key, it.value) }
+        return chat.userJoinDates.map { JoinDateResponse(userId = it.key.toString(), it.value) }
     }
 
     @DgsData(parentType = "DirectChat", field = "messages")
@@ -76,9 +76,9 @@ class ChatDataFetcher @Autowired constructor(
         }
             .map { message -> MessageResponse(
                 username = message.sender.username,
-                userId = message.sender.userId,
+                userId = message.sender.userId.toString(),
                 content = message.content,
-                chatId = message.associatedChat.chatId,
+                chatId = message.associatedChat.chatId.toString(),
                 timestamp = message.timestamp.toFloat()
             )}
 
@@ -106,9 +106,9 @@ class ChatDataFetcher @Autowired constructor(
             .map { message ->
                 MessageResponse(
                     username = message.sender.username,
-                    userId = message.sender.userId,
+                    userId = message.sender.userId.toString(),
                     content = message.content,
-                    chatId = message.associatedChat.chatId,
+                    chatId = message.associatedChat.chatId.toString(),
                     timestamp = message.timestamp.toFloat()
                 )
             }

@@ -9,8 +9,12 @@ import it.mag.wrongtzap.util.IdGenUtil
 import jakarta.persistence.*
 
 @Entity
+@Table(indexes = [
+    Index(name = "idx_name", columnList = "chat_name")
+])
 data class GroupChat (
 
+    @Column(nullable = false, name = "chat_name")
     var name: String,
 
     @ManyToMany
@@ -40,12 +44,11 @@ data class GroupChat (
     )
     @MapKeyJoinColumn(name = "user_id")
     @Column(name = "join_date",)
-    val userJoinDates: MutableMap<String, Long>,
+    val userJoinDates: MutableMap<Long, Long>,
 
     @ElementCollection
     val archived: MutableList<String> = mutableListOf()
 
     ): Chat(
-    chatId = IdGenUtil.generateChatId(name),
     creationDate = System.currentTimeMillis()
 )

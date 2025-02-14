@@ -5,12 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository: JpaRepository<User, String>{
+interface UserRepository: JpaRepository<User, Long>{
 
-    fun findByUsername(UserId: String): List<User>
+    fun findByUsername(username: String): List<User>
     fun findByPasswordAndEmail(userPassword: String, userMail: String): User
     fun findByEmail(userMail: String): User?
     fun deleteByUsernameAndEmail(userName: String, userMail: String): User
+    fun deleteByUserIdAndEmail(userId: Long, userMail: String)
 
 }
 

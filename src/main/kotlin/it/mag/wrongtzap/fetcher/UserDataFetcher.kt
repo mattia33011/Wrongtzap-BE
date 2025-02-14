@@ -18,7 +18,7 @@ class UserDataFetcher @Autowired constructor(
 ) {
 
     @DgsQuery(field = "user")
-    fun getUser(@InputArgument userId: String) = userService.retrieveById(userId)
+    fun getUser(@InputArgument userId: Long) = userService.retrieveById(userId)
 
 
     @DgsQuery(field = "everyUser")
@@ -41,9 +41,12 @@ class UserDataFetcher @Autowired constructor(
     }
 
     @DgsData(parentType = "User", field = "friends")
-    fun getFriends(dfe: DgsDataFetchingEnvironment): Set<ProfileResponse>{
+    fun getFriends(dfe: DgsDataFetchingEnvironment): MutableList<ProfileResponse>{
         val user = dfe.getSource<User>() ?: throw UserNotFoundException()
 
-        return user.friends.toSet()
+        return user.friends.map { friendId -> ProfileResponse(
+            userId = friendId,
+            username = friendId.toString()
+        )}.toMutableList()
     }
 }

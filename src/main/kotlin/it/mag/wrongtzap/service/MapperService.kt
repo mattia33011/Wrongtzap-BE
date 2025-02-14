@@ -15,13 +15,13 @@ class MapperService {
     fun groupChatToResponse(chat: GroupChat): GroupChatResponse {
         val response = GroupChatResponse(
             name = chat.name,
-            chatId = chat.chatId,
+            chatId = chat.chatId.toString(),
             creationDate = chat.creationDate,
             messages = chat.messages.map { message -> messageToResponse(message) }.toMutableList(),
             users = chat.participants.map { user -> userToProfile(user) }.toMutableSet(),
             joinDate = chat.userJoinDates.map {
                 date -> JoinDateResponse(
-                    userId = date.key,
+                    userId = date.key.toString(),
                     timestamp = date.value
                 )
             }.toMutableSet(),
@@ -33,7 +33,7 @@ class MapperService {
 
     fun directChatToResponse(chat: DirectChat): DirectChatResponse {
         val response = DirectChatResponse(
-            chatId = chat.chatId,
+            chatId = chat.chatId.toString(),
             creationDate = chat.creationDate,
             messages = chat.messages.map { message -> messageToResponse(message) }.toMutableList(),
             participants = chat.participants.map { user -> userToProfile(user) },
@@ -44,11 +44,11 @@ class MapperService {
 
     fun userToResponse(user: User): UserResponse {
         val response = UserResponse(
-            userId = user.userId,
+            userId = user.userId.toString(),
             username = user.username,
             directChats = user.directChats.map { chat -> directChatToResponse(chat) }.toMutableSet(),
             groupChats = user.groupChats.map { chat -> groupChatToResponse(chat) }.toMutableSet(),
-            friends = user.friends
+            friends = user.friends.map { friend -> idToProfile(friend)  }.toMutableList()
         )
         return response
     }
@@ -61,13 +61,20 @@ class MapperService {
         return response
     }
 
+    fun idToProfile(userId: Long): ProfileResponse{
+        return ProfileResponse(
+            userId = userId,
+            username = userId.toString()
+        )
+    }
+
     fun messageToResponse(message: Message): MessageResponse {
         val response = MessageResponse(
             content = message.content,
             timestamp = message.timestamp,
-            chatId = message.associatedChat.chatId,
+            chatId = message.associatedChat.chatId.toString(),
             username = message.sender.username,
-            userId = message.sender.userId
+            userId = message.sender.userId.toString(),
         )
         return response
     }

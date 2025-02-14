@@ -1,14 +1,14 @@
 extend type Query{
-    Chat (chatId: String!): DirectChat!
+    Chat (chatId: Float!): DirectChat!
     everyChat: [DirectChat!]
-    Group(groupId: String!): GroupChat!
+    Group(groupId: Float!): GroupChat!
     everyGroup: [GroupChat!]
 }
 
 
 
 type DirectChat{
-    chatId: String!
+    chatId: Float!
     creationDate: Float!
     participants: [UserProfile!]!
     messages: [MessageResponse!]
@@ -16,7 +16,7 @@ type DirectChat{
 }
 
 type GroupChat{
-    chatId: String!
+    chatId: Float!
     name: String!
     creationDate: Float!
     participants : [UserProfile!]!
@@ -28,7 +28,7 @@ type GroupChat{
 
 type ChatResponse{
     name: String!
-    chatId: String!
+    chatId: Float!
 }
 
 type JoinDateResponse{

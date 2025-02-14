@@ -1,10 +1,8 @@
 package it.mag.wrongtzap.controller
 
+import it.mag.wrongtzap.controller.web.request.user.*
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.manager.UserManager
-import it.mag.wrongtzap.controller.web.request.user.FriendRequest
-import it.mag.wrongtzap.controller.web.request.user.NewPasswordRequest
-import it.mag.wrongtzap.controller.web.request.user.ProfileFetchRequest
 import it.mag.wrongtzap.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -31,21 +29,16 @@ class UserController @Autowired constructor(
 
     @PatchMapping("/user/username")
     fun patchUserName(
-        @RequestHeader("Authorization") token: String,
-        @RequestBody userName: String
-    ) = userService.editUserName(jwtUtil.tokenToSubject(token), userName)
+        request: EditProfileRequest
+    ) = userService.editUserName(request)
 
     @PatchMapping("/user/password")
-    fun patchUserPassword(
-        @RequestHeader("Authorization") token: String,
-        @RequestBody newPasswordRequest: NewPasswordRequest,
-    ) = userManager.changePassword(jwtUtil.tokenToSubject(token), newPasswordRequest)
+    fun patchUserPassword(@RequestBody newPasswordRequest: NewPasswordRequest,
+    ) = userManager.changePassword(newPasswordRequest)
 
 
     @DeleteMapping("/user/delete")
-    fun deleteUser(
-        @RequestHeader("Authorization") token: String
-    ) = userService.deleteUser(jwtUtil.tokenToSubject(token))
+    fun deleteUser(@RequestBody request: UserDeleteRequest) = userManager.deleteUser(request)
 
     @MessageMapping("/user/friend/add")
     fun addFriend(request: FriendRequest){

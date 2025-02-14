@@ -14,7 +14,7 @@ data class Message(
     @Id
     @Column(updatable = false, nullable = false)
     @JsonView(ViewsConfig.Public::class)
-    var messageId: String = "",
+    var messageId: Long,
 
     @Column(updatable = false)
     @JsonView(ViewsConfig.Public::class)
@@ -35,22 +35,13 @@ data class Message(
     val associatedChat: Chat,
 
     @ElementCollection
-    val deletedForUser: MutableSet<String> = mutableSetOf(),
+    val deletedForUser: MutableSet<Long> = mutableSetOf(),
 
     @Column(nullable = false)
     @JsonView(ViewsConfig.Internal::class)
     var deletedForEveryone: Boolean = false
 
 ){
-
-    @PrePersist
-    fun messageInit(){
-
-        val userName = sender.userId.substringBefore("-")
-        val preciseTime = TimeGenUtil.millisecondsFormat()
-
-        messageId = "$userName-$preciseTime"
-    }
 
     fun deleteForEveryone(){
         deletedForEveryone = true

@@ -3,7 +3,9 @@ package it.mag.wrongtzap.service
 import it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException
 import it.mag.wrongtzap.controller.web.exception.message.MessageNotFoundException
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
+import it.mag.wrongtzap.controller.web.request.user.EditProfileRequest
 import it.mag.wrongtzap.controller.web.request.user.FriendRequest
+import it.mag.wrongtzap.controller.web.request.user.UserDeleteRequest
 import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
 import it.mag.wrongtzap.model.*
 import it.mag.wrongtzap.repository.UserRepository
@@ -24,18 +26,15 @@ class UserService(
 
     //Read methods
     fun retrieveByUsername(username: String) = userRepository.findByUsername(username)
-    fun retrieveById(userId: String): User {
-        val user = userRepository.findById(userId).orElseThrow{
-            UserNotFoundException()
-        }
-        return user
+    fun retrieveById(userId: Long): User {
+        return userRepository.findById(userId).orElseThrow{ UserNotFoundException() }
     }
 
     fun retrieveAllUsers() = userRepository.findAll()
     fun retrieveByEmail(userMail: String) = userRepository.findByEmail(userMail.lowercase())
     fun retrieveByPasswordAndEmail(userPassword: String, userMail: String) = userRepository.findByPasswordAndEmail(userPassword, userMail)
 
-    fun retrieveChat(userId: String, chatId: String): DirectChat{
+    fun retrieveChat(userId: Long, chatId: Long): DirectChat{
 
         val user = userRepository.findById(userId).orElseThrow {
             UserNotFoundException("User not found")
@@ -47,7 +46,7 @@ class UserService(
         return chat
     }
 
-    fun retrieveGroup(userId: String, chatId: String): GroupChat{
+    fun retrieveGroup(userId: Long, chatId: Long): GroupChat{
 
         val user = userRepository.findById(userId).orElseThrow {
             UserNotFoundException("User not found")
@@ -59,7 +58,7 @@ class UserService(
         return chat
     }
 
-    fun searchMessages(userId: String, messageBody: String): MutableList<Message>{
+    fun searchMessages(userId: Long, messageBody: String): MutableList<Message>{
 
         val user = userRepository.findById(userId)
             .orElseThrow{ UserNotFoundException("User Does not exist") }
@@ -88,14 +87,8 @@ class UserService(
             val receiver = userRepository.findById(request.receiverId)
                 .orElseThrow { UserNotFoundException("Friend not found") }
 
-        user.friends.add(ProfileResponse(
-                userId = receiver.userId,
-                username = receiver.username
-        ))
-        receiver.friends.add(ProfileResponse(
-            userId = user.userId,
-            username = user.username
-        ))
+        user.friends.add(receiver.userId)
+        receiver.friends.add(user.userId)
 
         // Save both users
         userRepository.save(user)
@@ -113,10 +106,10 @@ class UserService(
         val receiver = userRepository.findById(request.receiverId).orElseThrow { UserNotFoundException() }
 
 
-        val friendship = sender.friends.find { friend -> friend.userId == receiver.userId }
+        val friendship = sender.friends.find { friendId -> friendId == receiver.userId }
             ?: throw UserNotFoundException()
 
-        val reverseFriendship = receiver.friends.find { friend -> friend.userId == sender.userId }
+        val reverseFriendship = receiver.friends.find { friendId -> friendId == sender.userId }
             ?: throw UserNotFoundException()
 
         sender.friends.remove(friendship)
@@ -132,25 +125,22 @@ class UserService(
     }
 
     @Transactional
-    fun editUserName(userId: String, newName: String): User{
+    fun editUserName(request: EditProfileRequest): User{
 
-        val user = userRepository.findById(userId).getOrNull()
+        val user = userRepository.findById(request.userId).getOrNull()
             ?: throw UserNotFoundException()
 
-        user.apply {
-            username = newName
-        }
+        if(!request.username.isNullOrEmpty())
+            user.apply {
+                username = request.username
+            }
 
         return userRepository.save(user)
     }
 
     //Delete method
     @Transactional
-    fun deleteUser(userId: String): User{
-        val user = userRepository.findById(userId).getOrNull()
-            ?: throw UserNotFoundException()
-
-        userRepository.deleteByUsernameAndEmail(user.username, user.email)
-        return user
+    fun deleteUser(userId: Long, email: String){
+        userRepository.deleteByUserIdAndEmail(userId, email)
     }
 }

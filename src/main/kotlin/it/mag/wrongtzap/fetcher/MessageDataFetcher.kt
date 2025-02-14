@@ -13,7 +13,7 @@ class MessageDataFetcher @Autowired constructor(
 ) {
 
     @DgsQuery(field = "Message")
-    fun getMessage(@InputArgument messageId: String) = messageService.retrieveById(messageId)
+    fun getMessage(@InputArgument messageId: Long) = messageService.retrieveById(messageId)
 
     @DgsQuery
     fun searchMessage(@InputArgument messageBody: String) = messageService.retrieveByKeyword(messageBody)
@@ -26,8 +26,7 @@ class MessageDataFetcher @Autowired constructor(
 
         val message = dfe.getSource<Message>() ?: throw MessageNotFoundException()
 
-        return message.sender.userId
-
+        return message.sender.userId.toString()
     }
 
     @DgsData(parentType = "Message", field = "username")
@@ -43,6 +42,6 @@ class MessageDataFetcher @Autowired constructor(
     fun getChat(dfe: DataFetchingEnvironment): String{
         val message = dfe.getSource<Message>() ?: throw MessageNotFoundException()
 
-        return message.associatedChat.chatId
+        return message.associatedChat.chatId.toString()
     }
 }

@@ -1,8 +1,8 @@
 package it.mag.wrongtzap.controller.web.request.message
 
 class MessageRequest(
-    val userId: String,
-    val chatId: String,
+    val userId: Long,
+    val chatId: Long,
     val body: String,
     val type: String
 )
