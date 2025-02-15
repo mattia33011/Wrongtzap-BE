@@ -23,7 +23,7 @@ class ChatDataFetcher @Autowired constructor(
     private val chatService: DirectChatService,
 ) {
     @DgsQuery(field = "Chat")
-    fun getChat(@InputArgument chatId: Long) = chatService.retrieveChatById(chatId)
+    fun getChat(@InputArgument chatId: String) = chatService.retrieveChatById(chatId)
 
     @DgsQuery(field = "everyChat")
     fun getEveryChat() = chatService.retrieveAllChats()

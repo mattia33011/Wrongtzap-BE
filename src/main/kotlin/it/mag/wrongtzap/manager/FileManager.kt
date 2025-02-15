@@ -17,7 +17,7 @@ class FileManager @Autowired constructor(
     private val fileService: FileService,
 ) {
     fun uploadFile(request: FileRequest, file:MultipartFile){
-        if (checkEntityExistence(request.entityId.toLong(), request.entityType)){
+        if (checkEntityExistence(request.entityId, request.entityType)){
             val filePath = "/${request.entityType}/${request.entityId}/file"
             fileService.uploadFile("files", filePath,file)
         }
@@ -25,7 +25,7 @@ class FileManager @Autowired constructor(
     }
 
     fun downloadFile(request: FileRequest): ByteArray{
-        if(checkEntityExistence(request.entityId.toLong(), request.entityType)){
+        if(checkEntityExistence(request.entityId, request.entityType)){
             val filePath: String = "/${request.entityType}/${request.entityId}/file"
             val file = fileService.downloadFile("files", filePath)
             return file
@@ -33,7 +33,7 @@ class FileManager @Autowired constructor(
         else throw NullPointerException()
     }
 
-    private fun checkEntityExistence(id: Long, type: String): Boolean{
+    private fun checkEntityExistence(id: String, type: String): Boolean{
         when(type){
             "user" -> {
                 val user = userService.retrieveById(id)

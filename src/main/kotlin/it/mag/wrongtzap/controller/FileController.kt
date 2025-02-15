@@ -29,7 +29,7 @@ class FileController @Autowired constructor(
         @RequestParam("file") file: MultipartFile,
         @RequestParam("entityId") entityId: String,
         @RequestParam("entityType")entityType: String,
-    ) = fileManager.uploadFile(FileRequest(entityId = entityId.toLong(), entityType = entityType), file)
+    ) = fileManager.uploadFile(FileRequest(entityId = entityId, entityType = entityType), file)
 
     @PostMapping("/files/download")
     fun getFiles(@RequestBody request: FileRequest): ResponseEntity<ByteArray>{

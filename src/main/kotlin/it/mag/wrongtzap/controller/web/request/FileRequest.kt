@@ -1,6 +1,6 @@
 package it.mag.wrongtzap.controller.web.request
 
 data class FileRequest (
-    val entityId: Number,
+    val entityId: String,
     val entityType: String,
 )

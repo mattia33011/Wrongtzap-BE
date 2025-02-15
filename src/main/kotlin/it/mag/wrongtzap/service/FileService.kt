@@ -10,6 +10,7 @@ import java.io.InputStream
 class FileService @Autowired constructor(
     private val minioClient: MinioClient)
 {
+    val bucketName = "files"
     fun bucketExists(bucketName: String): Boolean{
         return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())
     }

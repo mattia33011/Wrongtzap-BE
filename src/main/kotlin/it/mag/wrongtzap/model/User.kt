@@ -21,7 +21,7 @@ data class User(
     @Id
     @Column(updatable = false, nullable = false, name = "user_id")
     @JsonView(ViewsConfig.Public::class)
-    val userId: Long,
+    val userId: String,
 
     @JsonView(ViewsConfig.Public::class)
     @Column(nullable = false, name = "user_name")
@@ -50,6 +50,6 @@ data class User(
         joinColumns = [JoinColumn(name = "user_id")]
     )
     @Column(name = "friend_id")
-    val friends: MutableList<Long> = mutableListOf()
+    val friends: MutableList<String> = mutableListOf()
 
 }

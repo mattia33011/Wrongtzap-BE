@@ -11,7 +11,7 @@ import org.hibernate.annotations.GenericGenerator
 open class Chat(
     @Id
     @Column(updatable = false, nullable = false)
-    open var chatId: Long = 0,
+    open var chatId: String = "",
 
     @Column(updatable = false)
     open val creationDate: Long,

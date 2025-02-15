@@ -13,5 +13,5 @@ class MessageController @Autowired constructor(
 )
 {
     @DeleteMapping("/{messageId}")
-    fun deleteMessage(@PathVariable messageId: Long) = messageService.deleteMessage(messageId)
+    fun deleteMessage(@PathVariable messageId: String) = messageService.deleteMessage(messageId)
 }

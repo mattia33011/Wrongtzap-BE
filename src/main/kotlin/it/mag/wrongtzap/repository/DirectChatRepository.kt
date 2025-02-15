@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface DirectChatRepository: JpaRepository<DirectChat, Long>
+interface DirectChatRepository: JpaRepository<DirectChat, String>
 {
-    override fun deleteById(chatId: Long)
+    override fun deleteById(chatId: String)
 }

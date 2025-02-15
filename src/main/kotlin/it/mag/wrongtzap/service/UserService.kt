@@ -26,7 +26,7 @@ class UserService(
 
     //Read methods
     fun retrieveByUsername(username: String) = userRepository.findByUsername(username)
-    fun retrieveById(userId: Long): User {
+    fun retrieveById(userId: String): User {
         return userRepository.findById(userId).orElseThrow{ UserNotFoundException() }
     }
 
@@ -34,7 +34,7 @@ class UserService(
     fun retrieveByEmail(userMail: String) = userRepository.findByEmail(userMail.lowercase())
     fun retrieveByPasswordAndEmail(userPassword: String, userMail: String) = userRepository.findByPasswordAndEmail(userPassword, userMail)
 
-    fun retrieveChat(userId: Long, chatId: Long): DirectChat{
+    fun retrieveChat(userId: String, chatId: String): DirectChat{
 
         val user = userRepository.findById(userId).orElseThrow {
             UserNotFoundException("User not found")
@@ -46,7 +46,7 @@ class UserService(
         return chat
     }
 
-    fun retrieveGroup(userId: Long, chatId: Long): GroupChat{
+    fun retrieveGroup(userId: String, chatId: String): GroupChat{
 
         val user = userRepository.findById(userId).orElseThrow {
             UserNotFoundException("User not found")
@@ -58,7 +58,7 @@ class UserService(
         return chat
     }
 
-    fun searchMessages(userId: Long, messageBody: String): MutableList<Message>{
+    fun searchMessages(userId: String, messageBody: String): MutableList<Message>{
 
         val user = userRepository.findById(userId)
             .orElseThrow{ UserNotFoundException("User Does not exist") }
@@ -140,7 +140,7 @@ class UserService(
 
     //Delete method
     @Transactional
-    fun deleteUser(userId: Long, email: String){
+    fun deleteUser(userId: String, email: String){
         userRepository.deleteByUserIdAndEmail(userId, email)
     }
 }

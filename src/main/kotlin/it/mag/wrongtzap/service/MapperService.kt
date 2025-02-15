@@ -15,13 +15,13 @@ class MapperService {
     fun groupChatToResponse(chat: GroupChat): GroupChatResponse {
         val response = GroupChatResponse(
             name = chat.name,
-            chatId = chat.chatId.toString(),
+            chatId = chat.chatId,
             creationDate = chat.creationDate,
             messages = chat.messages.map { message -> messageToResponse(message) }.toMutableList(),
             users = chat.participants.map { user -> userToProfile(user) }.toMutableSet(),
             joinDate = chat.userJoinDates.map {
                 date -> JoinDateResponse(
-                    userId = date.key.toString(),
+                    userId = date.key,
                     timestamp = date.value
                 )
             }.toMutableSet(),
@@ -33,7 +33,7 @@ class MapperService {
 
     fun directChatToResponse(chat: DirectChat): DirectChatResponse {
         val response = DirectChatResponse(
-            chatId = chat.chatId.toString(),
+            chatId = chat.chatId,
             creationDate = chat.creationDate,
             messages = chat.messages.map { message -> messageToResponse(message) }.toMutableList(),
             participants = chat.participants.map { user -> userToProfile(user) },
@@ -44,7 +44,7 @@ class MapperService {
 
     fun userToResponse(user: User): UserResponse {
         val response = UserResponse(
-            userId = user.userId.toString(),
+            userId = user.userId,
             username = user.username,
             directChats = user.directChats.map { chat -> directChatToResponse(chat) }.toMutableSet(),
             groupChats = user.groupChats.map { chat -> groupChatToResponse(chat) }.toMutableSet(),
@@ -61,10 +61,10 @@ class MapperService {
         return response
     }
 
-    fun idToProfile(userId: Long): ProfileResponse{
+    fun idToProfile(userId: String): ProfileResponse{
         return ProfileResponse(
             userId = userId,
-            username = userId.toString()
+            username = userId
         )
     }
 
@@ -72,9 +72,9 @@ class MapperService {
         val response = MessageResponse(
             content = message.content,
             timestamp = message.timestamp,
-            chatId = message.associatedChat.chatId.toString(),
+            chatId = message.associatedChat.chatId,
             username = message.sender.username,
-            userId = message.sender.userId.toString(),
+            userId = message.sender.userId,
         )
         return response
     }

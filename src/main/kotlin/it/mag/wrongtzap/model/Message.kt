@@ -14,7 +14,7 @@ data class Message(
     @Id
     @Column(updatable = false, nullable = false)
     @JsonView(ViewsConfig.Public::class)
-    var messageId: Long,
+    var messageId: String,
 
     @Column(updatable = false)
     @JsonView(ViewsConfig.Public::class)
@@ -35,7 +35,7 @@ data class Message(
     val associatedChat: Chat,
 
     @ElementCollection
-    val deletedForUser: MutableSet<Long> = mutableSetOf(),
+    val deletedForUser: MutableSet<String> = mutableSetOf(),
 
     @Column(nullable = false)
     @JsonView(ViewsConfig.Internal::class)

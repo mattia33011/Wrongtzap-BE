@@ -57,7 +57,7 @@ class ChatController @Autowired constructor(
         //
 
         @MessageMapping("/groups/{groupId}/name")
-        fun editGroupName(@DestinationVariable groupId: Long, chatName: String){
+        fun editGroupName(@DestinationVariable groupId: String, chatName: String){
             val chat = groupChatService.editChatName(groupId,chatName)
             template.convertAndSend("/topic/groups", chat)
         }

@@ -1,10 +1,10 @@
 type Query{
-    user(userId: Float!): User!
+    user(userId: String!): User!
     everyUser: [User!]
 }
 
 type User {
-    userId: Float!
+    userId: String!
     username: String!
     directChats: [DirectChat!]
     groupChats: [GroupChat!]
@@ -12,7 +12,7 @@ type User {
 }
 
 type UserProfile{
-    userId: Float!
+    userId: String!
     username: String!
 }
 

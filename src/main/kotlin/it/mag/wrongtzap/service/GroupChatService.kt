@@ -24,14 +24,14 @@ class GroupChatService @Autowired constructor(
     //Retrieve Methods
     //
 
-    fun retrieveChatById(chatId: Long): GroupChat = groupChatRepository.findById(chatId)
+    fun retrieveChatById(chatId: String): GroupChat = groupChatRepository.findById(chatId)
         .orElseThrow { it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
     fun retrieveAllChats() = groupChatRepository.findAll()
 
 
     @Transactional
-    fun editChatName(chatId: Long, newName: String){
+    fun editChatName(chatId: String, newName: String){
         val chat = groupChatRepository.findById(chatId)
             .orElseThrow{ it.mag.wrongtzap.controller.web.exception.chat.ChatNotFoundException() }
 
@@ -79,6 +79,6 @@ class GroupChatService @Autowired constructor(
     //
 
     @Transactional
-    fun deleteChat(chatId: Long) = groupChatRepository.deleteById(chatId)
+    fun deleteChat(chatId: String) = groupChatRepository.deleteById(chatId)
 
 }

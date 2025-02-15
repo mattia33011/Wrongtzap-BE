@@ -13,7 +13,7 @@ class MessageDataFetcher @Autowired constructor(
 ) {
 
     @DgsQuery(field = "Message")
-    fun getMessage(@InputArgument messageId: Long) = messageService.retrieveById(messageId)
+    fun getMessage(@InputArgument messageId: String) = messageService.retrieveById(messageId)
 
     @DgsQuery
     fun searchMessage(@InputArgument messageBody: String) = messageService.retrieveByKeyword(messageBody)

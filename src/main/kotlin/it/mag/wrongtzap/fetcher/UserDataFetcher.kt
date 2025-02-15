@@ -18,7 +18,7 @@ class UserDataFetcher @Autowired constructor(
 ) {
 
     @DgsQuery(field = "user")
-    fun getUser(@InputArgument userId: Long) = userService.retrieveById(userId)
+    fun getUser(@InputArgument userId: String) = userService.retrieveById(userId)
 
 
     @DgsQuery(field = "everyUser")

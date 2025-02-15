@@ -56,7 +56,7 @@ class UserManager @Autowired constructor(
             username = request.userName,
             email = request.userMail.lowercase(),
             password = passwordEncoder.encode(request.userPassword),
-            userId = snowflake.nextId()
+            userId = snowflake.nextId().toString()
         )
 
 

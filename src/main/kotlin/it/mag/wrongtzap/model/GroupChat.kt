@@ -44,7 +44,7 @@ data class GroupChat (
     )
     @MapKeyJoinColumn(name = "user_id")
     @Column(name = "join_date",)
-    val userJoinDates: MutableMap<Long, Long>,
+    val userJoinDates: MutableMap<String, Long>,
 
     @ElementCollection
     val archived: MutableList<String> = mutableListOf()

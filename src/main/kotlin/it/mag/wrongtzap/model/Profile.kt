@@ -15,5 +15,5 @@ import jakarta.persistence.Table
 data class Profile (
     @Id
     @Column(updatable = false, nullable = false)
-    val profileId: Long,
+    val profileId: String,
 )

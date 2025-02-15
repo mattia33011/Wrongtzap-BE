@@ -34,7 +34,7 @@ class ChatManager @Autowired constructor(
 ) {
     private val chatNameFormat = Regex("^[\\w\\s]{1,100}\$")
 
-    fun findChat(chatId: Long, type: String): Any{
+    fun findChat(chatId: String, type: String): Any{
         return if (type == "group"){
             groupChatService.retrieveChatById(chatId)
         } else
@@ -57,7 +57,7 @@ class ChatManager @Autowired constructor(
             participants = listOf(firstUser,secondUser)
         )
 
-        chat.chatId = snowflake.nextId()
+        chat.chatId = snowflake.nextId().toString()
 
         directChatService.saveChat(chat)
         return mapperService.directChatToResponse(chat)
@@ -84,7 +84,7 @@ class ChatManager @Autowired constructor(
             admins = admin
         )
 
-        chat.chatId = snowflake.nextId()
+        chat.chatId = snowflake.nextId().toString()
 
         groupChatService.saveChat(chat)
         return mapperService.groupChatToResponse(chat)
@@ -120,7 +120,7 @@ class ChatManager @Autowired constructor(
 
         val message = Message(
             sender = sender,
-            messageId = snowflake.nextId(),
+            messageId = snowflake.nextId().toString(),
             content = request.body,
             associatedChat = chat,
             timestamp = System.currentTimeMillis()

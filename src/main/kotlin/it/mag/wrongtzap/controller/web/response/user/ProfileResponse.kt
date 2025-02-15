@@ -4,6 +4,6 @@ import jakarta.persistence.Embeddable
 
 @Embeddable
 data class ProfileResponse (
-    val userId: Long,
+    val userId: String,
     val username: String
 )
