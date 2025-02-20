@@ -1,14 +1,14 @@
 package it.mag.wrongtzap.controller
 
-import it.mag.wrongtzap.controller.web.request.chat.DirectChatRequest
-import it.mag.wrongtzap.controller.web.request.chat.GroupChatRequest
-import it.mag.wrongtzap.controller.web.request.message.MessageDeletionRequest
-import it.mag.wrongtzap.controller.web.request.message.MessageRequest
-import it.mag.wrongtzap.controller.web.response.chat.ParticipantRequest
+import it.mag.wrongtzap.controller.web.chat.request.ChatRequest
+import it.mag.wrongtzap.controller.web.chat.request.GroupRequest
+import it.mag.wrongtzap.controller.web.message.MessageDeletionRequest
+import it.mag.wrongtzap.controller.web.message.MessageRequest
+import it.mag.wrongtzap.controller.web.chat.request.ParticipantRequest
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.manager.ChatManager
 import it.mag.wrongtzap.model.type.ChatRequestType
-import it.mag.wrongtzap.service.GroupChatService
+import it.mag.wrongtzap.service.GroupService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Controller
 
 @Controller
 class ChatController @Autowired constructor(
-    private val groupChatService: GroupChatService,
+    private val groupChatService: GroupService,
     private val chatManager: ChatManager,
     private val template: SimpMessagingTemplate,
     private val jwtUtil: JwtUtil,
@@ -30,11 +30,11 @@ class ChatController @Autowired constructor(
 
         @MessageMapping("/chats/create")
         @SendTo("/topic/chats")
-        fun createChat(chatRequest: DirectChatRequest) = chatManager.createChat(ChatRequestType.Direct(chatRequest))
+        fun createChat(chatRequest: ChatRequest) = chatManager.createChat(ChatRequestType.Direct(chatRequest))
 
         @MessageMapping("/groups/create")
         @SendTo("/topic/groups")
-        fun createGroup(chatRequest: GroupChatRequest) = chatManager.createChat(ChatRequestType.Group(chatRequest))
+        fun createGroup(chatRequest: GroupRequest) = chatManager.createChat(ChatRequestType.Group(chatRequest))
 
 
         @MessageMapping("/groups/users/add")

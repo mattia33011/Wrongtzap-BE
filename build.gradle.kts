@@ -4,6 +4,7 @@ plugins {
 	kotlin("plugin.jpa") version "1.9.24"
 	kotlin("jvm") version "2.1.0"
 	kotlin("plugin.spring") version "1.9.24"
+	kotlin("kapt") version "2.1.10"
 }
 
 group = "it.mag"
@@ -37,7 +38,6 @@ dependencies {
 	implementation ("org.springframework.security:spring-security-oauth2-jose")
 	implementation ("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-
 	implementation ("cn.hutool:hutool-core:5.8.20")
 
 	//Kotlin Starter
@@ -59,12 +59,13 @@ dependencies {
 	testImplementation ("org.springframework.boot:spring-boot-testcontainers")
 
 	//Databases
-	//runtimeOnly("com.mysql:mysql-connector-j")
 	runtimeOnly("mysql:mysql-connector-java:8.0.33")
 	implementation("io.minio:minio:8.5.14")
 
 	// DGS Framework for GraphQL
 	implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")
+	implementation("com.graphql-java:graphql-java-extended-scalars:22.0")
+
 
 	// JWT Security
 	implementation ("com.auth0:java-jwt:4.4.0")
@@ -77,9 +78,12 @@ dependencies {
 
 	// Coroutines
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-
 	implementation("io.reactivex.rxjava3:rxjava:3.1.5")
 	implementation ("org.springframework:spring-messaging")
+
+	//Metamodels
+	compileOnly("org.hibernate:hibernate-jpamodelgen:6.4.4.Final")
+	kapt("org.hibernate:hibernate-jpamodelgen:6.4.4.Final")
 
 }
 

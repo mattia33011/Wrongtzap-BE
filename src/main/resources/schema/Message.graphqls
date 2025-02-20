@@ -4,9 +4,17 @@ extend type Query{
     everyMessage: [Message!]
 }
 
+type PagedMessages{
+    content: [MessageResponse!]
+    pageSize: Int
+    pageNumber: Int
+    totalRecords: Long
+    totalPages: Int
+}
+
 type Message{
     messageId: String!
-    timestamp: Float!
+    timestamp: Long!
     content: String!
     username: String!
     userId: String!
@@ -17,7 +25,8 @@ type Message{
 type MessageResponse{
     username: String!
     userId: String!
+    chatId: String!
     content: String!
-    timestamp: Float!
+    timestamp: Long!
 }
 

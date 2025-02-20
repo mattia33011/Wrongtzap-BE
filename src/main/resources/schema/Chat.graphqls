@@ -1,39 +1,50 @@
 extend type Query{
-    Chat (chatId: String!): DirectChat!
-    everyChat: [DirectChat!]
-    Group(groupId: String!): GroupChat!
-    everyGroup: [GroupChat!]
+    chat (chatId: String!): Chat!
+    everyChat: [Chat!]
 }
 
 
-
-type DirectChat{
+type Chat{
     chatId: String!
-    creationDate: Float!
-    participants: [UserProfile!]!
-    messages: [MessageResponse!]
+    creationDate: Long!
+    members: [UserProfile!]!
+    messages: PagedMessages!
     archived: [String!]
 }
+
+
+type PagedChats{
+    content: [Chat!]
+    pageSize: Int
+    pageNumber: Int
+    totalRecords: Long
+    totalPages: Int
+}
+
+type PagedGroups{
+    content: [GroupChat!]
+    pageSize: Int
+    pageNumber: Int
+    totalRecords: Long
+    totalPages: Int
+}
+
 
 type GroupChat{
     chatId: String!
     name: String!
-    creationDate: Float!
-    participants : [UserProfile!]!
-    participantsDate: [JoinDateResponse!]!
+    creationDate: Long!
+    members : [UserProfile!]!
+    memberEntry: [JoinDateEntry!]!
     admins: [UserProfile!]!
-    messages: [MessageResponse!]
+    messages: PagedMessages!
     archived: [String!]
 }
 
-type ChatResponse{
-    name: String!
-    chatId: String!
-}
 
-type JoinDateResponse{
+type JoinDateEntry{
     userId: String!
-    timestamp: Float!
+    timestamp: Long!
 }
 
 

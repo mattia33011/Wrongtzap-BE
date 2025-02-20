@@ -1,14 +1,9 @@
 package it.mag.wrongtzap.model
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
-import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
-import it.mag.wrongtzap.util.IdGenUtil
 import jakarta.persistence.*
-import okhttp3.internal.userAgent
-import org.springframework.context.annotation.Primary
 
 
 @Entity
@@ -36,20 +31,17 @@ data class User(
     var password: String,
 ){
 
-    @ManyToMany(mappedBy = "participants", cascade = [CascadeType.ALL])
+    @ManyToMany(mappedBy = "members", cascade = [CascadeType.ALL])
     @JsonManagedReference("User-Chats")
-    var directChats: MutableSet<DirectChat> = mutableSetOf()
+    var chats: MutableSet<Chat> = mutableSetOf()
 
-    @ManyToMany(mappedBy = "participants", cascade = [CascadeType.ALL])
+    @ManyToMany(mappedBy = "members", cascade = [CascadeType.ALL])
     @JsonManagedReference("User-Groups")
-    var groupChats: MutableSet<GroupChat> = mutableSetOf()
+    var groups: MutableSet<GroupChat> = mutableSetOf()
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-        name = "user_friends",
-        joinColumns = [JoinColumn(name = "user_id")]
-    )
-    @Column(name = "friend_id")
-    val friends: MutableList<String> = mutableListOf()
+    @OneToMany(mappedBy = "sender", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val outboundFriendships: MutableSet<Friend> = mutableSetOf()
 
+    @OneToMany(mappedBy = "receiver", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val inboundFriendships: MutableSet<Friend> = mutableSetOf()
 }

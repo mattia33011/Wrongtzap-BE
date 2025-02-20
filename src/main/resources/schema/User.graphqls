@@ -1,20 +1,33 @@
+scalar Long
+
 type Query{
     user(userId: String!): User!
     everyUser: [User!]
 }
 
+
 type User {
     userId: String!
     username: String!
-    directChats: [DirectChat!]
-    groupChats: [GroupChat!]
-    friends: [UserProfile!]
+    chats: PagedChats!
+    groups: PagedGroups!
+    friends: [FriendResponse!]
 }
+
 
 type UserProfile{
     userId: String!
     username: String!
 }
+
+
+type FriendResponse{
+    friendshipId: String!
+    userId: String!
+    username: String!
+    status: String!
+}
+
 
 
 
