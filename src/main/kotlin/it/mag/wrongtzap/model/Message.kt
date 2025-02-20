@@ -3,8 +3,7 @@ package it.mag.wrongtzap.model
 import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
-import it.mag.wrongtzap.model.base.Chat
-import it.mag.wrongtzap.util.TimeGenUtil
+import it.mag.wrongtzap.model.base.BaseChat
 import jakarta.persistence.*
 
 
@@ -24,7 +23,7 @@ data class Message(
     var content: String,
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn( nullable = false)
     @JsonView(ViewsConfig.Public::class)
     @JsonBackReference("Message-Sender")
     val sender: User,
@@ -32,7 +31,7 @@ data class Message(
     @ManyToOne
     @JoinColumn(name = "chat_id", nullable = false)
     @JsonBackReference("Message-Chat")
-    val associatedChat: Chat,
+    val associatedChat: BaseChat,
 
     @ElementCollection
     val deletedForUser: MutableSet<String> = mutableSetOf(),

@@ -2,16 +2,16 @@ package it.mag.wrongtzap.manager
 
 import cn.hutool.core.lang.Snowflake
 import it.mag.wrongtzap.controller.web.exception.user.*
-import it.mag.wrongtzap.controller.web.request.user.LoginRequest
-import it.mag.wrongtzap.controller.web.request.user.NewPasswordRequest
-import it.mag.wrongtzap.controller.web.request.user.RegisterRequest
-import it.mag.wrongtzap.controller.web.request.user.UserDeleteRequest
+import it.mag.wrongtzap.controller.web.page.request.PageChatRequest
+import it.mag.wrongtzap.controller.web.user.request.LoginRequest
+import it.mag.wrongtzap.controller.web.user.request.NewPasswordRequest
+import it.mag.wrongtzap.controller.web.user.request.RegisterRequest
+import it.mag.wrongtzap.controller.web.user.request.UserDeleteRequest
 import it.mag.wrongtzap.jwt.Token
 import it.mag.wrongtzap.jwt.JwtUtil
 import it.mag.wrongtzap.model.User
 import it.mag.wrongtzap.service.*
 import it.mag.wrongtzap.util.EmailCoroutineScope
-import it.mag.wrongtzap.util.IdGenUtil
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,24 +19,23 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 class UserManager @Autowired constructor(
     private val userService: UserService,
-    private val conversionService: MapperService,
     private val emailService: EmailService,
-    private val snowflake: Snowflake,
 
+    private val snowflake: Snowflake,
     private val passwordEncoder: PasswordEncoder,
     private val jwtUtil: JwtUtil,
-
     ) {
     private val passwordFormat = Regex("^[\\w+_!()?*\\-\\[\\]{}]{8,20}$")
     private val usernameFormat = Regex("\\w{6,20}")
     private val emailFormat = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z_]+\\.[a-zA-Z]{2,}$")
 
+    fun getNextGroupPage(request: PageChatRequest){
 
+    }
     //Create method
     fun createUser(request: RegisterRequest): Token{
 

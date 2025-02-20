@@ -1,19 +1,17 @@
 package it.mag.wrongtzap.manager
 
-import it.mag.wrongtzap.controller.web.request.FileRequest
+import it.mag.wrongtzap.controller.web.file.FileRequest
 import it.mag.wrongtzap.service.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.io.File
 import kotlin.NullPointerException
 
 @Service
 class FileManager @Autowired constructor(
     private val userService: UserService,
-    private val groupService: GroupChatService,
+    private val groupService: GroupService,
     private val messageService: MessageService,
-    private val chatService: DirectChatService,
     private val fileService: FileService,
 ) {
     fun uploadFile(request: FileRequest, file:MultipartFile){

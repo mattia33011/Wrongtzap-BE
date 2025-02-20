@@ -2,10 +2,12 @@ package it.mag.wrongtzap.fetcher
 
 import com.netflix.graphql.dgs.*
 import it.mag.wrongtzap.controller.web.exception.user.UserNotFoundException
+import it.mag.wrongtzap.controller.web.page.response.PagedGraphChat
+import it.mag.wrongtzap.controller.web.page.response.PagedGraphGroup
+import it.mag.wrongtzap.controller.web.user.response.FriendResponse
 import it.mag.wrongtzap.model.User
-import it.mag.wrongtzap.controller.web.response.user.ProfileResponse
-import it.mag.wrongtzap.model.DirectChat
-import it.mag.wrongtzap.model.GroupChat
+import it.mag.wrongtzap.service.ChatService
+import it.mag.wrongtzap.service.GroupService
 import it.mag.wrongtzap.service.MapperService
 import it.mag.wrongtzap.service.UserService
 
@@ -14,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired
 @DgsComponent
 class UserDataFetcher @Autowired constructor(
     private val userService: UserService,
-    private val conversionService: MapperService,
+    private val chatService: ChatService,
+    private val groupService: GroupService,
+    private val mapper: MapperService,
 ) {
 
     @DgsQuery(field = "user")
@@ -25,28 +29,44 @@ class UserDataFetcher @Autowired constructor(
     fun getAllUsers() = userService.retrieveAllUsers()
 
 
-    @DgsData(parentType = "User", field = "directChats")
-    fun getDirectChats(dfe: DgsDataFetchingEnvironment): Set<DirectChat> {
-
+    @DgsData(parentType = "User", field = "chats")
+    fun pageChats(dfe: DgsDataFetchingEnvironment): PagedGraphChat {
         val user = dfe.getSource<User>() ?: throw UserNotFoundException()
-        return user.directChats
+        val page = chatService.returnFirstPage(user)
+
+        return PagedGraphChat(
+            pageNumber = page.number,
+            pageSize = page.size,
+            totalRecords = page.totalElements,
+            totalPages = page.totalPages,
+            content = page.content.map (mapper::chatToResponse)
+        )
     }
 
 
-    @DgsData(parentType = "User", field = "groupChats")
-    fun getGroupChats(dfe: DgsDataFetchingEnvironment): Set<GroupChat> {
-
+    @DgsData(parentType = "User", field = "groups")
+    fun pageGroups(dfe: DgsDataFetchingEnvironment): PagedGraphGroup {
         val user = dfe.getSource<User>() ?: throw UserNotFoundException()
-        return user.groupChats
+        val page = groupService.returnFirstPage(user)
+
+        return PagedGraphGroup(
+            pageNumber = page.number,
+            pageSize = page.size,
+            totalRecords = page.totalElements,
+            totalPages = page.totalPages,
+            content = page.content.map(mapper::groupToResponse)
+        )
     }
 
     @DgsData(parentType = "User", field = "friends")
-    fun getFriends(dfe: DgsDataFetchingEnvironment): MutableList<ProfileResponse>{
+    fun getFriends(dfe: DgsDataFetchingEnvironment): MutableSet<FriendResponse>{
         val user = dfe.getSource<User>() ?: throw UserNotFoundException()
+        val friends: MutableSet<FriendResponse> = mutableSetOf()
 
-        return user.friends.map { friendId -> ProfileResponse(
-            userId = friendId,
-            username = friendId.toString()
-        )}.toMutableList()
+        friends.addAll(user.inboundFriendships.map(mapper::receivedFriendToResponse))
+        friends.addAll(user.outboundFriendships.map(mapper::sentFriendToResponse))
+
+        return friends
     }
+
 }

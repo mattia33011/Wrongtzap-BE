@@ -1,9 +1,9 @@
 package it.mag.wrongtzap.model.type
 
-import it.mag.wrongtzap.controller.web.request.chat.DirectChatRequest
-import it.mag.wrongtzap.controller.web.request.chat.GroupChatRequest
+import it.mag.wrongtzap.controller.web.chat.request.ChatRequest
+import it.mag.wrongtzap.controller.web.chat.request.GroupRequest
 
 sealed class ChatRequestType {
-    data class Direct(val direct: DirectChatRequest) : ChatRequestType()
-    data class Group(val group: GroupChatRequest) : ChatRequestType()
+    data class Direct(val direct: ChatRequest) : ChatRequestType()
+    data class Group(val group: GroupRequest) : ChatRequestType()
 }

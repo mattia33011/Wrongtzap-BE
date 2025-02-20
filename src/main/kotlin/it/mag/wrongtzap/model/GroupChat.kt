@@ -1,11 +1,9 @@
 package it.mag.wrongtzap.model
 
 import com.fasterxml.jackson.annotation.JsonBackReference
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.fasterxml.jackson.annotation.JsonView
 import it.mag.wrongtzap.config.ViewsConfig
-import it.mag.wrongtzap.model.base.Chat
-import it.mag.wrongtzap.util.IdGenUtil
+import it.mag.wrongtzap.model.base.BaseChat
 import jakarta.persistence.*
 
 @Entity
@@ -19,13 +17,13 @@ data class GroupChat (
 
     @ManyToMany
     @JoinTable(
-        name = "groupParticipants",
+        name = "groupMembers",
         joinColumns = [JoinColumn(name = "chat_id")],
         inverseJoinColumns = [JoinColumn(name = "participant_id")]
     )
     @JsonView(ViewsConfig.Public::class)
     @JsonBackReference("User-Groups")
-    var participants: MutableSet<User>,
+    var members: MutableSet<User>,
 
     @ManyToMany
     @JoinTable(
@@ -39,16 +37,16 @@ data class GroupChat (
 
     @ElementCollection
     @CollectionTable(
-        name = "user_join_date",
+        name = "user_join_entry",
         joinColumns = [JoinColumn(name = "chat_id")]
     )
     @MapKeyJoinColumn(name = "user_id")
     @Column(name = "join_date",)
-    val userJoinDates: MutableMap<String, Long>,
+    val userJoinEntry: MutableMap<String, Long>,
 
     @ElementCollection
     val archived: MutableList<String> = mutableListOf()
 
-    ): Chat(
+    ): BaseChat(
     creationDate = System.currentTimeMillis()
 )
