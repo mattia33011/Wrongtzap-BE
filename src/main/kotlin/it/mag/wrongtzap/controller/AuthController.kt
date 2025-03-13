@@ -1,4 +1,4 @@
-package it.mag.wrongtzap.controller.web.user.response
+package it.mag.wrongtzap.controller
 
 import it.mag.wrongtzap.manager.UserManager
 import it.mag.wrongtzap.controller.web.user.request.LoginRequest
